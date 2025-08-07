@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Real-Time Polling App - WebSocket Demo</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        .login-form, .poll-form {
+            margin-bottom: 20px;
+        }
+        .login-form input, .poll-form input, .poll-form textarea {
+            width: 100%;
+            padding: 10px;
+            margin: 5px 0;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        .login-form button, .poll-form button {
+            background: #007bff;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .login-form button:hover, .poll-form button:hover {
+            background: #0056b3;
+        }
+        .poll {
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 15px;
+            margin: 10px 0;
+            background: #f9f9f9;
+        }
+        .poll-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .poll-description {
+            color: #666;
+            margin-bottom: 15px;
+        }
+        .option {
+            margin: 5px 0;
+            padding: 10px;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        .option:hover {
+            background-color: #e9ecef;
+        }
+        .option.voted {
+            background-color: #d4edda;
+            border-color: #c3e6cb;
+        }
+        .vote-count {
+            float: right;
+            font-weight: bold;
+            color: #28a745;
+        }
+        .percentage {
+            font-size: 12px;
+            color: #666;
+        }
+        .status {
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 4px;
+        }
+        .status.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .status.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .status.info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+        .hidden {
+            display: none;
+        }
+        .websocket-status {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+        .websocket-status.connected {
+            background: #d4edda;
+            color: #155724;
+        }
+        .websocket-status.disconnected {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        .logs {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            padding: 10px;
+            height: 200px;
+            overflow-y: auto;
+            font-family: monospace;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Real-Time Polling App - WebSocket Demo</h1>
+    
+    <div class="container">
+        <h2>Authentication</h2>
+        <div id="loginForm" class="login-form">
+            <input type="email" id="email" placeholder="Email" value="alice@example.com">
+            <input type="password" id="password" placeholder="Password" value="password123">
+            <button onclick="login()">Login</button>
+        </div>
+        <div id="userInfo" class="hidden">
+            <p>Logged in as: <span id="userName"></span></p>
+            <button onclick="logout()">Logout</button>
+        </div>
+    </div>
+
+    <div class="container">
+        <h2>WebSocket Connection</h2>
+        <div id="websocketStatus" class="websocket-status disconnected">
+            Disconnected
+        </div>
+        <button id="connectBtn" onclick="connectWebSocket()">Connect</button>
+        <button id="disconnectBtn" onclick="disconnectWebSocket()" disabled>Disconnect</button>
+    </div>
+
+    <div class="container">
+        <h2>Create New Poll</h2>
+        <div id="pollForm" class="poll-form hidden">
+            <input type="text" id="pollTitle" placeholder="Poll Title">
+            <textarea id="pollDescription" placeholder="Poll Description" rows="3"></textarea>
+            <input type="datetime-local" id="expiresAt" placeholder="Expires At">
+            <input type="text" id="pollOptions" placeholder="Options (comma-separated)">
+            <button onclick="createPoll()">Create Poll</button>
+        </div>
+    </div>
+
+    <div class="container">
+        <h2>Active Polls</h2>
+        <div id="polls"></div>
+    </div>
+
+    <div class="container">
+        <h2>WebSocket Activity Log</h2>
+        <div id="logs" class="logs"></div>
+    </div>
+
+    <script>
+        let token = '';
+        let cable = null;
+        let pollsSubscription = null;
+        const API_BASE = 'http://localhost:3000/api/v1';
+        const WS_BASE = 'ws://localhost:3000/cable';
+
+        // Authentication
+        async function login() {
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            try {
+                const response = await fetch(`${API_BASE}/auth/login`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ email, password })
+                });
+
+                const data = await response.json();
+                
+                if (response.ok) {
+                    token = data.token;
+                    document.getElementById('userName').textContent = data.user.name;
+                    document.getElementById('loginForm').classList.add('hidden');
+                    document.getElementById('userInfo').classList.remove('hidden');
+                    document.getElementById('pollForm').classList.remove('hidden');
+                    showStatus('Login successful!', 'success');
+                    loadPolls();
+                } else {
+                    showStatus(data.error || 'Login failed', 'error');
+                }
+            } catch (error) {
+                showStatus('Network error', 'error');
+            }
+        }
+
+        function logout() {
+            token = '';
+            disconnectWebSocket();
+            document.getElementById('loginForm').classList.remove('hidden');
+            document.getElementById('userInfo').classList.add('hidden');
+            document.getElementById('pollForm').classList.add('hidden');
+            document.getElementById('polls').innerHTML = '';
+            showStatus('Logged out', 'info');
+        }
+
+        // WebSocket connection
+        function connectWebSocket() {
+            if (!token) {
+                showStatus('Please login first', 'error');
+                return;
+            }
+
+            const wsUrl = `${WS_BASE}?token=${token}`;
+            cable = new WebSocket(wsUrl);
+
+            cable.onopen = function() {
+                document.getElementById('websocketStatus').textContent = 'Connected';
+                document.getElementById('websocketStatus').className = 'websocket-status connected';
+                document.getElementById('connectBtn').disabled = true;
+                document.getElementById('disconnectBtn').disabled = false;
+                logMessage('WebSocket connected');
+                
+                // Subscribe to polls channel
+                subscribeToPollsChannel();
+            };
+
+            cable.onclose = function() {
+                document.getElementById('websocketStatus').textContent = 'Disconnected';
+                document.getElementById('websocketStatus').className = 'websocket-status disconnected';
+                document.getElementById('connectBtn').disabled = false;
+                document.getElementById('disconnectBtn').disabled = true;
+                logMessage('WebSocket disconnected');
+            };
+
+            cable.onerror = function(error) {
+                logMessage('WebSocket error: ' + error);
+                showStatus('WebSocket connection error', 'error');
+            };
+
+            cable.onmessage = function(event) {
+                const data = JSON.parse(event.data);
+                handleWebSocketMessage(data);
+            };
+        }
+
+        function disconnectWebSocket() {
+            if (cable) {
+                cable.close();
+                cable = null;
+            }
+        }
+
+        function subscribeToPollsChannel() {
+            if (!cable || cable.readyState !== WebSocket.OPEN) return;
+
+            const subscribeMessage = {
+                command: 'subscribe',
+                identifier: JSON.stringify({ channel: 'PollsChannel' })
+            };
+            
+            cable.send(JSON.stringify(subscribeMessage));
+            logMessage('Subscribed to PollsChannel');
+        }
+
+        function handleWebSocketMessage(data) {
+            logMessage('Received: ' + JSON.stringify(data));
+            
+            if (data.type === 'poll_created' || data.type === 'poll_updated') {
+                loadPolls();
+                showStatus(`Poll ${data.type.replace('_', ' ')}!`, 'info');
+            } else if (data.type === 'poll_deleted') {
+                loadPolls();
+                showStatus('Poll deleted!', 'info');
+            } else if (data.type === 'vote_cast') {
+                loadPolls();
+                showStatus('New vote cast!', 'info');
+            }
+        }
+
+        // Poll management
+        async function loadPolls() {
+            if (!token) return;
+
+            try {
+                const response = await fetch(`${API_BASE}/polls`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                const data = await response.json();
+                displayPolls(data.polls);
+            } catch (error) {
+                showStatus('Error loading polls', 'error');
+            }
+        }
+
+        function displayPolls(polls) {
+            const pollsContainer = document.getElementById('polls');
+            pollsContainer.innerHTML = '';
+
+            polls.forEach(poll => {
+                const pollDiv = document.createElement('div');
+                pollDiv.className = 'poll';
+                pollDiv.innerHTML = `
+                    <div class="poll-title">${poll.title}</div>
+                    <div class="poll-description">${poll.description || ''}</div>
+                    <div class="poll-meta">
+                        <small>Created by: ${poll.user.name} | Total votes: ${poll.total_votes} | Expires: ${new Date(poll.expires_at).toLocaleString()}</small>
+                    </div>
+                    <div class="options">
+                        ${poll.options.map(option => `
+                            <div class="option" onclick="vote(${poll.id}, ${option.id})">
+                                ${option.text}
+                                <span class="vote-count">${option.votes_count} votes</span>
+                                <div class="percentage">${option.percentage}%</div>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+                pollsContainer.appendChild(pollDiv);
+            });
+        }
+
+        async function createPoll() {
+            const title = document.getElementById('pollTitle').value;
+            const description = document.getElementById('pollDescription').value;
+            const expiresAt = document.getElementById('expiresAt').value;
+            const options = document.getElementById('pollOptions').value.split(',').map(o => o.trim());
+
+            if (!title || !expiresAt || options.length < 2) {
+                showStatus('Please fill all fields and provide at least 2 options', 'error');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/polls`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({
+                        poll: {
+                            title,
+                            description,
+                            expires_at: new Date(expiresAt).toISOString()
+                        },
+                        options
+                    })
+                });
+
+                const data = await response.json();
+                
+                if (response.ok) {
+                    showStatus('Poll created successfully!', 'success');
+                    document.getElementById('pollTitle').value = '';
+                    document.getElementById('pollDescription').value = '';
+                    document.getElementById('expiresAt').value = '';
+                    document.getElementById('pollOptions').value = '';
+                    loadPolls();
+                } else {
+                    showStatus(data.errors ? data.errors.join(', ') : 'Error creating poll', 'error');
+                }
+            } catch (error) {
+                showStatus('Network error', 'error');
+            }
+        }
+
+        async function vote(pollId, optionId) {
+            try {
+                const response = await fetch(`${API_BASE}/polls/${pollId}/votes`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({
+                        vote: { option_id: optionId }
+                    })
+                });
+
+                const data = await response.json();
+                
+                if (response.ok) {
+                    showStatus('Vote cast successfully!', 'success');
+                    loadPolls();
+                } else {
+                    showStatus(data.error || 'Error voting', 'error');
+                }
+            } catch (error) {
+                showStatus('Network error', 'error');
+            }
+        }
+
+        // Utility functions
+        function showStatus(message, type) {
+            const existingStatus = document.querySelector('.status');
+            if (existingStatus) {
+                existingStatus.remove();
+            }
+
+            const statusDiv = document.createElement('div');
+            statusDiv.className = `status ${type}`;
+            statusDiv.textContent = message;
+            document.body.insertBefore(statusDiv, document.body.firstChild);
+
+            setTimeout(() => {
+                statusDiv.remove();
+            }, 5000);
+        }
+
+        function logMessage(message) {
+            const logs = document.getElementById('logs');
+            const timestamp = new Date().toLocaleTimeString();
+            logs.innerHTML += `[${timestamp}] ${message}\n`;
+            logs.scrollTop = logs.scrollHeight;
+        }
+
+        // Set default expires_at to 24 hours from now
+        document.addEventListener('DOMContentLoaded', function() {
+            const tomorrow = new Date();
+            tomorrow.setDate(tomorrow.getDate() + 1);
+            document.getElementById('expiresAt').value = tomorrow.toISOString().slice(0, 16);
+        });
+    </script>
+</body>
+</html>

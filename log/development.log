@@ -1,0 +1,783 @@
+  [1m[35mSQL (0.8ms)[0m  [1m[35mSET search_path TO public /*application='RealTimePollingAppApi'*/[0m
+  [1m[35m (265.5ms)[0m  [1m[35mCREATE DATABASE "real_time_polling_app_api_development" ENCODING = 'unicode' /*application='RealTimePollingAppApi'*/[0m
+  [1m[35mSQL (0.2ms)[0m  [1m[35mSET search_path TO public /*application='RealTimePollingAppApi'*/[0m
+  [1m[35m (178.7ms)[0m  [1m[35mCREATE DATABASE "real_time_polling_app_api_test" ENCODING = 'unicode' /*application='RealTimePollingAppApi'*/[0m
+  [1m[35m (8.5ms)[0m  [1m[35mCREATE TABLE "schema_migrations" ("version" character varying NOT NULL PRIMARY KEY) /*application='RealTimePollingAppApi'*/[0m
+  [1m[35m (5.2ms)[0m  [1m[35mCREATE TABLE "ar_internal_metadata" ("key" character varying NOT NULL PRIMARY KEY, "value" character varying, "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL) /*application='RealTimePollingAppApi'*/[0m
+  [1m[35m (0.4ms)[0m  [1m[34mSELECT pg_try_advisory_lock(4278266093832997455) /*application='RealTimePollingAppApi'*/[0m
+  [1m[36mActiveRecord::SchemaMigration Load (0.5ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC /*application='RealTimePollingAppApi'*/[0m
+  [1m[36mActiveRecord::InternalMetadata Load (0.9ms)[0m  [1m[34mSELECT * FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = 'environment' ORDER BY "ar_internal_metadata"."key" ASC LIMIT 1 /*application='RealTimePollingAppApi'*/[0m
+  [1m[36mActiveRecord::InternalMetadata Create (1.6ms)[0m  [1m[32mINSERT INTO "ar_internal_metadata" ("key", "value", "created_at", "updated_at") VALUES ('environment', 'development', '2025-08-07 14:12:38.331973', '2025-08-07 14:12:38.331977') RETURNING "key" /*application='RealTimePollingAppApi'*/[0m
+Migrating to CreateUsers (20250807140636)
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[35mBEGIN /*application='RealTimePollingAppApi'*/[0m
+  [1m[35m (17.4ms)[0m  [1m[35mCREATE TABLE "users" ("id" bigserial primary key, "name" character varying NOT NULL, "email" character varying NOT NULL, "password_digest" character varying NOT NULL, "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL) /*application='RealTimePollingAppApi'*/[0m
+  [1m[35m (23.2ms)[0m  [1m[35mCREATE UNIQUE INDEX "index_users_on_email" ON "users" ("email") /*application='RealTimePollingAppApi'*/[0m
+  [1m[36mActiveRecord::SchemaMigration Create (0.6ms)[0m  [1m[32mINSERT INTO "schema_migrations" ("version") VALUES ('20250807140636') RETURNING "version" /*application='RealTimePollingAppApi'*/[0m
+  [1m[36mTRANSACTION (1.2ms)[0m  [1m[35mCOMMIT /*application='RealTimePollingAppApi'*/[0m
+Migrating to CreatePolls (20250807140701)
+  [1m[36mTRANSACTION (1.8ms)[0m  [1m[35mBEGIN /*application='RealTimePollingAppApi'*/[0m
+  [1m[35m (15.7ms)[0m  [1m[35mCREATE TABLE "polls" ("id" bigserial primary key, "title" character varying NOT NULL, "description" text, "user_id" bigint NOT NULL, "active" boolean DEFAULT TRUE NOT NULL, "expires_at" timestamp(6) NOT NULL, "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL, CONSTRAINT "fk_rails_16e77efa22"
+FOREIGN KEY ("user_id")
+  REFERENCES "users" ("id")
+) /*application='RealTimePollingAppApi'*/[0m
+  [1m[35m (2.4ms)[0m  [1m[35mCREATE INDEX "index_polls_on_user_id" ON "polls" ("user_id") /*application='RealTimePollingAppApi'*/[0m
+  [1m[35m (3.0ms)[0m  [1m[35mCREATE INDEX "index_polls_on_active" ON "polls" ("active") /*application='RealTimePollingAppApi'*/[0m
+  [1m[35m (7.1ms)[0m  [1m[35mCREATE INDEX "index_polls_on_expires_at" ON "polls" ("expires_at") /*application='RealTimePollingAppApi'*/[0m
+  [1m[36mActiveRecord::SchemaMigration Create (0.3ms)[0m  [1m[32mINSERT INTO "schema_migrations" ("version") VALUES ('20250807140701') RETURNING "version" /*application='RealTimePollingAppApi'*/[0m
+  [1m[36mTRANSACTION (1.5ms)[0m  [1m[35mCOMMIT /*application='RealTimePollingAppApi'*/[0m
+Migrating to CreateOptions (20250807140721)
+  [1m[36mTRANSACTION (1.9ms)[0m  [1m[35mBEGIN /*application='RealTimePollingAppApi'*/[0m
+  [1m[35m (8.6ms)[0m  [1m[35mCREATE TABLE "options" ("id" bigserial primary key, "text" character varying NOT NULL, "poll_id" bigint NOT NULL, "votes_count" integer DEFAULT 0 NOT NULL, "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL, CONSTRAINT "fk_rails_39c1a02844"
+FOREIGN KEY ("poll_id")
+  REFERENCES "polls" ("id")
+) /*application='RealTimePollingAppApi'*/[0m
+  [1m[35m (2.4ms)[0m  [1m[35mCREATE INDEX "index_options_on_poll_id" ON "options" ("poll_id") /*application='RealTimePollingAppApi'*/[0m
+  [1m[35m (15.7ms)[0m  [1m[35mCREATE INDEX "index_options_on_poll_id" ON "options" ("poll_id") /*application='RealTimePollingAppApi'*/[0m
+  [1m[36mTRANSACTION (0.4ms)[0m  [1m[31mROLLBACK /*application='RealTimePollingAppApi'*/[0m
+  [1m[35m (0.5ms)[0m  [1m[34mSELECT pg_advisory_unlock(4278266093832997455) /*application='RealTimePollingAppApi'*/[0m
+  [1m[35m (0.2ms)[0m  [1m[34mSELECT pg_try_advisory_lock(4278266093832997455) /*application='RealTimePollingAppApi'*/[0m
+  [1m[36mActiveRecord::SchemaMigration Load (6.2ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC /*application='RealTimePollingAppApi'*/[0m
+  [1m[36mActiveRecord::InternalMetadata Load (1.3ms)[0m  [1m[34mSELECT * FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = 'environment' ORDER BY "ar_internal_metadata"."key" ASC LIMIT 1 /*application='RealTimePollingAppApi'*/[0m
+Migrating to CreateOptions (20250807140721)
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[35mBEGIN /*application='RealTimePollingAppApi'*/[0m
+  [1m[35m (15.3ms)[0m  [1m[35mCREATE TABLE "options" ("id" bigserial primary key, "text" character varying NOT NULL, "poll_id" bigint NOT NULL, "votes_count" integer DEFAULT 0 NOT NULL, "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL, CONSTRAINT "fk_rails_39c1a02844"
+FOREIGN KEY ("poll_id")
+  REFERENCES "polls" ("id")
+) /*application='RealTimePollingAppApi'*/[0m
+  [1m[35m (2.5ms)[0m  [1m[35mCREATE INDEX "index_options_on_poll_id" ON "options" ("poll_id") /*application='RealTimePollingAppApi'*/[0m
+  [1m[36mActiveRecord::SchemaMigration Create (0.3ms)[0m  [1m[32mINSERT INTO "schema_migrations" ("version") VALUES ('20250807140721') RETURNING "version" /*application='RealTimePollingAppApi'*/[0m
+  [1m[36mTRANSACTION (3.0ms)[0m  [1m[35mCOMMIT /*application='RealTimePollingAppApi'*/[0m
+Migrating to CreateVotes (20250807140750)
+  [1m[36mTRANSACTION (2.2ms)[0m  [1m[35mBEGIN /*application='RealTimePollingAppApi'*/[0m
+  [1m[35m (20.2ms)[0m  [1m[35mCREATE TABLE "votes" ("id" bigserial primary key, "user_id" bigint NOT NULL, "option_id" bigint NOT NULL, "poll_id" bigint NOT NULL, "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL, CONSTRAINT "fk_rails_c9b3bef597"
+FOREIGN KEY ("user_id")
+  REFERENCES "users" ("id")
+, CONSTRAINT "fk_rails_86965b42bc"
+FOREIGN KEY ("option_id")
+  REFERENCES "options" ("id")
+, CONSTRAINT "fk_rails_97f5854c0f"
+FOREIGN KEY ("poll_id")
+  REFERENCES "polls" ("id")
+) /*application='RealTimePollingAppApi'*/[0m
+  [1m[35m (6.2ms)[0m  [1m[35mCREATE INDEX "index_votes_on_user_id" ON "votes" ("user_id") /*application='RealTimePollingAppApi'*/[0m
+  [1m[35m (3.6ms)[0m  [1m[35mCREATE INDEX "index_votes_on_option_id" ON "votes" ("option_id") /*application='RealTimePollingAppApi'*/[0m
+  [1m[35m (5.1ms)[0m  [1m[35mCREATE INDEX "index_votes_on_poll_id" ON "votes" ("poll_id") /*application='RealTimePollingAppApi'*/[0m
+  [1m[35m (6.7ms)[0m  [1m[35mCREATE UNIQUE INDEX "index_votes_on_user_and_poll" ON "votes" ("user_id", "poll_id") /*application='RealTimePollingAppApi'*/[0m
+  [1m[36mActiveRecord::SchemaMigration Create (0.4ms)[0m  [1m[32mINSERT INTO "schema_migrations" ("version") VALUES ('20250807140750') RETURNING "version" /*application='RealTimePollingAppApi'*/[0m
+  [1m[36mTRANSACTION (5.5ms)[0m  [1m[35mCOMMIT /*application='RealTimePollingAppApi'*/[0m
+  [1m[35m (2.7ms)[0m  [1m[34mSELECT pg_advisory_unlock(4278266093832997455) /*application='RealTimePollingAppApi'*/[0m
+  [1m[36mActiveRecord::SchemaMigration Load (0.8ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC /*application='RealTimePollingAppApi'*/[0m
+  [1m[36mActiveRecord::SchemaMigration Load (1.4ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC /*application='RealTimePollingAppApi'*/[0m
+  [1m[36mUser Load (1.3ms)[0m  [1m[34mSELECT "users".* FROM "users" WHERE "users"."email" = 'alice@example.com' LIMIT 1 /*application='RealTimePollingAppApi'*/[0m
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[35mBEGIN /*application='RealTimePollingAppApi'*/[0m
+  [1m[36mUser Exists? (2.4ms)[0m  [1m[34mSELECT 1 AS one FROM "users" WHERE LOWER("users"."email") = LOWER('alice@example.com') LIMIT 1 /*application='RealTimePollingAppApi'*/[0m
+  [1m[36mUser Create (0.6ms)[0m  [1m[32mINSERT INTO "users" ("name", "email", "password_digest", "created_at", "updated_at") VALUES ('Alice Johnson', 'alice@example.com', '$2a$12$g0MMH7zXY0.7UMycSql/n.aeLm9NpKwtIV/gVZPfOIzOaaUekrLHO', '2025-08-07 14:20:40.324400', '2025-08-07 14:20:40.324400') RETURNING "id" /*application='RealTimePollingAppApi'*/[0m
+  [1m[36mTRANSACTION (0.9ms)[0m  [1m[35mCOMMIT /*application='RealTimePollingAppApi'*/[0m
+  [1m[36mUser Load (0.3ms)[0m  [1m[34mSELECT "users".* FROM "users" WHERE "users"."email" = 'bob@example.com' LIMIT 1 /*application='RealTimePollingAppApi'*/[0m
+  [1m[36mTRANSACTION (0.6ms)[0m  [1m[35mBEGIN /*application='RealTimePollingAppApi'*/[0m
+  [1m[36mUser Exists? (5.3ms)[0m  [1m[34mSELECT 1 AS one FROM "users" WHERE LOWER("users"."email") = LOWER('bob@example.com') LIMIT 1 /*application='RealTimePollingAppApi'*/[0m
+  [1m[36mUser Create (0.4ms)[0m  [1m[32mINSERT INTO "users" ("name", "email", "password_digest", "created_at", "updated_at") VALUES ('Bob Smith', 'bob@example.com', '$2a$12$MfkKSd2s7Mm3io52.8hyUOrecK4vxwGRT/hZuTJfhrIidvKlFaLWC', '2025-08-07 14:20:40.612793', '2025-08-07 14:20:40.612793') RETURNING "id" /*application='RealTimePollingAppApi'*/[0m
+  [1m[36mTRANSACTION (3.2ms)[0m  [1m[35mCOMMIT /*application='RealTimePollingAppApi'*/[0m
+  [1m[36mUser Load (0.7ms)[0m  [1m[34mSELECT "users".* FROM "users" WHERE "users"."email" = 'charlie@example.com' LIMIT 1 /*application='RealTimePollingAppApi'*/[0m
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[35mBEGIN /*application='RealTimePollingAppApi'*/[0m
+  [1m[36mUser Exists? (3.3ms)[0m  [1m[34mSELECT 1 AS one FROM "users" WHERE LOWER("users"."email") = LOWER('charlie@example.com') LIMIT 1 /*application='RealTimePollingAppApi'*/[0m
+  [1m[36mUser Create (2.1ms)[0m  [1m[32mINSERT INTO "users" ("name", "email", "password_digest", "created_at", "updated_at") VALUES ('Charlie Brown', 'charlie@example.com', '$2a$12$740HT923gHiFkkWu01SduOtYtvmE7VkPycEPNnUvQViHPa/Ny5xpq', '2025-08-07 14:20:40.935158', '2025-08-07 14:20:40.935158') RETURNING "id" /*application='RealTimePollingAppApi'*/[0m
+  [1m[36mTRANSACTION (2.7ms)[0m  [1m[35mCOMMIT /*application='RealTimePollingAppApi'*/[0m
+  [1m[36mUser Count (0.4ms)[0m  [1m[34mSELECT COUNT(*) FROM "users" /*application='RealTimePollingAppApi'*/[0m
+  [1m[36mPoll Load (1.1ms)[0m  [1m[34mSELECT "polls".* FROM "polls" WHERE "polls"."title" = 'What is your favorite programming language?' LIMIT 1 /*application='RealTimePollingAppApi'*/[0m
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[35mBEGIN /*application='RealTimePollingAppApi'*/[0m
+  [1m[36mPoll Create (1.3ms)[0m  [1m[32mINSERT INTO "polls" ("title", "description", "user_id", "active", "expires_at", "created_at", "updated_at") VALUES ('What is your favorite programming language?', 'Help us understand the most popular programming languages among developers', 1, TRUE, '2025-08-14 14:20:41.085790', '2025-08-07 14:20:41.093399', '2025-08-07 14:20:41.093399') RETURNING "id" /*application='RealTimePollingAppApi'*/[0m
+  [1m[36mTRANSACTION (1.1ms)[0m  [1m[35mCOMMIT /*application='RealTimePollingAppApi'*/[0m
+  [1m[36mOption Exists? (0.7ms)[0m  [1m[34mSELECT 1 AS one FROM "options" WHERE "options"."poll_id" = 1 LIMIT 1 /*application='RealTimePollingAppApi'*/[0m
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[35mBEGIN /*application='RealTimePollingAppApi'*/[0m
+  [1m[36mOption Create (2.2ms)[0m  [1m[32mINSERT INTO "options" ("text", "poll_id", "votes_count", "created_at", "updated_at") VALUES ('JavaScript', 1, 0, '2025-08-07 14:20:41.168488', '2025-08-07 14:20:41.168488') RETURNING "id" /*application='RealTimePollingAppApi'*/[0m
+  [1m[36mTRANSACTION (0.7ms)[0m  [1m[35mCOMMIT /*application='RealTimePollingAppApi'*/[0m
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[35mBEGIN /*application='RealTimePollingAppApi'*/[0m
+  [1m[36mOption Create (1.8ms)[0m  [1m[32mINSERT INTO "options" ("text", "poll_id", "votes_count", "created_at", "updated_at") VALUES ('Python', 1, 0, '2025-08-07 14:20:41.185374', '2025-08-07 14:20:41.185374') RETURNING "id" /*application='RealTimePollingAppApi'*/[0m
+  [1m[36mTRANSACTION (0.8ms)[0m  [1m[35mCOMMIT /*application='RealTimePollingAppApi'*/[0m
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[35mBEGIN /*application='RealTimePollingAppApi'*/[0m
+  [1m[36mOption Create (2.9ms)[0m  [1m[32mINSERT INTO "options" ("text", "poll_id", "votes_count", "created_at", "updated_at") VALUES ('Ruby', 1, 0, '2025-08-07 14:20:41.200014', '2025-08-07 14:20:41.200014') RETURNING "id" /*application='RealTimePollingAppApi'*/[0m
+  [1m[36mTRANSACTION (0.9ms)[0m  [1m[35mCOMMIT /*application='RealTimePollingAppApi'*/[0m
+  [1m[36mTRANSACTION (0.3ms)[0m  [1m[35mBEGIN /*application='RealTimePollingAppApi'*/[0m
+  [1m[36mOption Create (3.5ms)[0m  [1m[32mINSERT INTO "options" ("text", "poll_id", "votes_count", "created_at", "updated_at") VALUES ('Java', 1, 0, '2025-08-07 14:20:41.221144', '2025-08-07 14:20:41.221144') RETURNING "id" /*application='RealTimePollingAppApi'*/[0m
+  [1m[36mTRANSACTION (5.8ms)[0m  [1m[35mCOMMIT /*application='RealTimePollingAppApi'*/[0m
+  [1m[36mTRANSACTION (0.9ms)[0m  [1m[35mBEGIN /*application='RealTimePollingAppApi'*/[0m
+  [1m[36mOption Create (9.8ms)[0m  [1m[32mINSERT INTO "options" ("text", "poll_id", "votes_count", "created_at", "updated_at") VALUES ('TypeScript', 1, 0, '2025-08-07 14:20:41.248867', '2025-08-07 14:20:41.248867') RETURNING "id" /*application='RealTimePollingAppApi'*/[0m
+  [1m[36mTRANSACTION (2.0ms)[0m  [1m[35mCOMMIT /*application='RealTimePollingAppApi'*/[0m
+  [1m[36mTRANSACTION (1.4ms)[0m  [1m[35mBEGIN /*application='RealTimePollingAppApi'*/[0m
+  [1m[36mOption Create (42.7ms)[0m  [1m[32mINSERT INTO "options" ("text", "poll_id", "votes_count", "created_at", "updated_at") VALUES ('Go', 1, 0, '2025-08-07 14:20:41.299431', '2025-08-07 14:20:41.299431') RETURNING "id" /*application='RealTimePollingAppApi'*/[0m
+  [1m[36mTRANSACTION (0.8ms)[0m  [1m[35mCOMMIT /*application='RealTimePollingAppApi'*/[0m
+  [1m[36mPoll Load (0.7ms)[0m  [1m[34mSELECT "polls".* FROM "polls" WHERE "polls"."title" = 'What is your preferred work arrangement?' LIMIT 1 /*application='RealTimePollingAppApi'*/[0m
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[35mBEGIN /*application='RealTimePollingAppApi'*/[0m
+  [1m[36mPoll Create (2.7ms)[0m  [1m[32mINSERT INTO "polls" ("title", "description", "user_id", "active", "expires_at", "created_at", "updated_at") VALUES ('What is your preferred work arrangement?', 'Understanding modern work preferences in the tech industry', 2, TRUE, '2025-08-21 14:20:41.362278', '2025-08-07 14:20:41.364765', '2025-08-07 14:20:41.364765') RETURNING "id" /*application='RealTimePollingAppApi'*/[0m
+  [1m[36mTRANSACTION (1.0ms)[0m  [1m[35mCOMMIT /*application='RealTimePollingAppApi'*/[0m
+  [1m[36mOption Exists? (0.3ms)[0m  [1m[34mSELECT 1 AS one FROM "options" WHERE "options"."poll_id" = 2 LIMIT 1 /*application='RealTimePollingAppApi'*/[0m
+  [1m[36mTRANSACTION (0.4ms)[0m  [1m[35mBEGIN /*application='RealTimePollingAppApi'*/[0m
+  [1m[36mOption Create (3.6ms)[0m  [1m[32mINSERT INTO "options" ("text", "poll_id", "votes_count", "created_at", "updated_at") VALUES ('Fully remote', 2, 0, '2025-08-07 14:20:41.391132', '2025-08-07 14:20:41.391132') RETURNING "id" /*application='RealTimePollingAppApi'*/[0m
+  [1m[36mTRANSACTION (0.7ms)[0m  [1m[35mCOMMIT /*application='RealTimePollingAppApi'*/[0m
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[35mBEGIN /*application='RealTimePollingAppApi'*/[0m
+  [1m[36mOption Create (3.9ms)[0m  [1m[32mINSERT INTO "options" ("text", "poll_id", "votes_count", "created_at", "updated_at") VALUES ('Hybrid (2-3 days in office)', 2, 0, '2025-08-07 14:20:41.403211', '2025-08-07 14:20:41.403211') RETURNING "id" /*application='RealTimePollingAppApi'*/[0m
+  [1m[36mTRANSACTION (0.7ms)[0m  [1m[35mCOMMIT /*application='RealTimePollingAppApi'*/[0m
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[35mBEGIN /*application='RealTimePollingAppApi'*/[0m
+  [1m[36mOption Create (4.5ms)[0m  [1m[32mINSERT INTO "options" ("text", "poll_id", "votes_count", "created_at", "updated_at") VALUES ('Fully in-office', 2, 0, '2025-08-07 14:20:41.417413', '2025-08-07 14:20:41.417413') RETURNING "id" /*application='RealTimePollingAppApi'*/[0m
+  [1m[36mTRANSACTION (0.7ms)[0m  [1m[35mCOMMIT /*application='RealTimePollingAppApi'*/[0m
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[35mBEGIN /*application='RealTimePollingAppApi'*/[0m
+  [1m[36mOption Create (2.6ms)[0m  [1m[32mINSERT INTO "options" ("text", "poll_id", "votes_count", "created_at", "updated_at") VALUES ('Flexible/No preference', 2, 0, '2025-08-07 14:20:41.437145', '2025-08-07 14:20:41.437145') RETURNING "id" /*application='RealTimePollingAppApi'*/[0m
+  [1m[36mTRANSACTION (1.0ms)[0m  [1m[35mCOMMIT /*application='RealTimePollingAppApi'*/[0m
+  [1m[36mPoll Load (0.3ms)[0m  [1m[34mSELECT "polls".* FROM "polls" WHERE "polls"."title" = 'Best web framework for 2025?' LIMIT 1 /*application='RealTimePollingAppApi'*/[0m
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[35mBEGIN /*application='RealTimePollingAppApi'*/[0m
+  [1m[36mPoll Create (3.2ms)[0m  [1m[32mINSERT INTO "polls" ("title", "description", "user_id", "active", "expires_at", "created_at", "updated_at") VALUES ('Best web framework for 2025?', 'What web framework do you think will dominate in 2025?', 3, TRUE, '2025-08-17 14:20:41.449020', '2025-08-07 14:20:41.451229', '2025-08-07 14:20:41.451229') RETURNING "id" /*application='RealTimePollingAppApi'*/[0m
+  [1m[36mTRANSACTION (1.0ms)[0m  [1m[35mCOMMIT /*application='RealTimePollingAppApi'*/[0m
+  [1m[36mOption Exists? (0.3ms)[0m  [1m[34mSELECT 1 AS one FROM "options" WHERE "options"."poll_id" = 3 LIMIT 1 /*application='RealTimePollingAppApi'*/[0m
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[35mBEGIN /*application='RealTimePollingAppApi'*/[0m
+  [1m[36mOption Create (2.7ms)[0m  [1m[32mINSERT INTO "options" ("text", "poll_id", "votes_count", "created_at", "updated_at") VALUES ('React', 3, 0, '2025-08-07 14:20:41.469287', '2025-08-07 14:20:41.469287') RETURNING "id" /*application='RealTimePollingAppApi'*/[0m
+  [1m[36mTRANSACTION (1.0ms)[0m  [1m[35mCOMMIT /*application='RealTimePollingAppApi'*/[0m
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[35mBEGIN /*application='RealTimePollingAppApi'*/[0m
+  [1m[36mOption Create (2.9ms)[0m  [1m[32mINSERT INTO "options" ("text", "poll_id", "votes_count", "created_at", "updated_at") VALUES ('Vue.js', 3, 0, '2025-08-07 14:20:41.499951', '2025-08-07 14:20:41.499951') RETURNING "id" /*application='RealTimePollingAppApi'*/[0m
+  [1m[36mTRANSACTION (1.1ms)[0m  [1m[35mCOMMIT /*application='RealTimePollingAppApi'*/[0m
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[35mBEGIN /*application='RealTimePollingAppApi'*/[0m
+  [1m[36mOption Create (2.2ms)[0m  [1m[32mINSERT INTO "options" ("text", "poll_id", "votes_count", "created_at", "updated_at") VALUES ('Angular', 3, 0, '2025-08-07 14:20:41.508934', '2025-08-07 14:20:41.508934') RETURNING "id" /*application='RealTimePollingAppApi'*/[0m
+  [1m[36mTRANSACTION (1.2ms)[0m  [1m[35mCOMMIT /*application='RealTimePollingAppApi'*/[0m
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[35mBEGIN /*application='RealTimePollingAppApi'*/[0m
+  [1m[36mOption Create (2.9ms)[0m  [1m[32mINSERT INTO "options" ("text", "poll_id", "votes_count", "created_at", "updated_at") VALUES ('Svelte', 3, 0, '2025-08-07 14:20:41.526135', '2025-08-07 14:20:41.526135') RETURNING "id" /*application='RealTimePollingAppApi'*/[0m
+  [1m[36mTRANSACTION (0.9ms)[0m  [1m[35mCOMMIT /*application='RealTimePollingAppApi'*/[0m
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[35mBEGIN /*application='RealTimePollingAppApi'*/[0m
+  [1m[36mOption Create (2.3ms)[0m  [1m[32mINSERT INTO "options" ("text", "poll_id", "votes_count", "created_at", "updated_at") VALUES ('Next.js', 3, 0, '2025-08-07 14:20:41.533734', '2025-08-07 14:20:41.533734') RETURNING "id" /*application='RealTimePollingAppApi'*/[0m
+  [1m[36mTRANSACTION (0.7ms)[0m  [1m[35mCOMMIT /*application='RealTimePollingAppApi'*/[0m
+  [1m[36mTRANSACTION (0.3ms)[0m  [1m[35mBEGIN /*application='RealTimePollingAppApi'*/[0m
+  [1m[36mOption Create (3.7ms)[0m  [1m[32mINSERT INTO "options" ("text", "poll_id", "votes_count", "created_at", "updated_at") VALUES ('Nuxt.js', 3, 0, '2025-08-07 14:20:41.543421', '2025-08-07 14:20:41.543421') RETURNING "id" /*application='RealTimePollingAppApi'*/[0m
+  [1m[36mTRANSACTION (0.7ms)[0m  [1m[35mCOMMIT /*application='RealTimePollingAppApi'*/[0m
+  [1m[36mPoll Count (0.3ms)[0m  [1m[34mSELECT COUNT(*) FROM "polls" /*application='RealTimePollingAppApi'*/[0m
+  [1m[36mOption Count (0.4ms)[0m  [1m[34mSELECT COUNT(*) FROM "options" /*application='RealTimePollingAppApi'*/[0m
+  [1m[36mOption Load (0.3ms)[0m  [1m[34mSELECT "options".* FROM "options" WHERE "options"."poll_id" = 1 /*application='RealTimePollingAppApi'*/[0m
+  [1m[36mVote Load (0.6ms)[0m  [1m[34mSELECT "votes".* FROM "votes" WHERE "votes"."user_id" = 2 AND "votes"."poll_id" = 1 AND "votes"."option_id" = 2 LIMIT 1 /*application='RealTimePollingAppApi'*/[0m
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[35mBEGIN /*application='RealTimePollingAppApi'*/[0m
+  [1m[36mVote Exists? (0.5ms)[0m  [1m[34mSELECT 1 AS one FROM "votes" WHERE "votes"."user_id" = 2 AND "votes"."poll_id" = 1 LIMIT 1 /*application='RealTimePollingAppApi'*/[0m
+  [1m[36mVote Create (1.2ms)[0m  [1m[32mINSERT INTO "votes" ("user_id", "option_id", "poll_id", "created_at", "updated_at") VALUES (2, 2, 1, '2025-08-07 14:20:41.650751', '2025-08-07 14:20:41.650751') RETURNING "id" /*application='RealTimePollingAppApi'*/[0m
+  [1m[36mVote Count (0.3ms)[0m  [1m[34mSELECT COUNT(*) FROM "votes" WHERE "votes"."option_id" = 2 /*application='RealTimePollingAppApi'*/[0m
+  ↳ app/models/vote.rb:28:in `update_option_votes_count'
+  [1m[36mOption Update (0.4ms)[0m  [1m[33mUPDATE "options" SET "votes_count" = 1 WHERE "options"."id" = 2 /*application='RealTimePollingAppApi'*/[0m
+  ↳ app/models/vote.rb:28:in `update_option_votes_count'
+  [1m[36mTRANSACTION (2.4ms)[0m  [1m[35mCOMMIT /*application='RealTimePollingAppApi'*/[0m
+  [1m[36mVote Load (0.3ms)[0m  [1m[34mSELECT "votes".* FROM "votes" WHERE "votes"."user_id" = 3 AND "votes"."poll_id" = 1 AND "votes"."option_id" = 1 LIMIT 1 /*application='RealTimePollingAppApi'*/[0m
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[35mBEGIN /*application='RealTimePollingAppApi'*/[0m
+  [1m[36mVote Exists? (2.8ms)[0m  [1m[34mSELECT 1 AS one FROM "votes" WHERE "votes"."user_id" = 3 AND "votes"."poll_id" = 1 LIMIT 1 /*application='RealTimePollingAppApi'*/[0m
+  [1m[36mVote Create (0.6ms)[0m  [1m[32mINSERT INTO "votes" ("user_id", "option_id", "poll_id", "created_at", "updated_at") VALUES (3, 1, 1, '2025-08-07 14:20:41.703516', '2025-08-07 14:20:41.703516') RETURNING "id" /*application='RealTimePollingAppApi'*/[0m
+  [1m[36mVote Count (0.3ms)[0m  [1m[34mSELECT COUNT(*) FROM "votes" WHERE "votes"."option_id" = 1 /*application='RealTimePollingAppApi'*/[0m
+  ↳ app/models/vote.rb:28:in `update_option_votes_count'
+  [1m[36mOption Update (0.2ms)[0m  [1m[33mUPDATE "options" SET "votes_count" = 1 WHERE "options"."id" = 1 /*application='RealTimePollingAppApi'*/[0m
+  ↳ app/models/vote.rb:28:in `update_option_votes_count'
+  [1m[36mTRANSACTION (0.8ms)[0m  [1m[35mCOMMIT /*application='RealTimePollingAppApi'*/[0m
+  [1m[36mOption Load (0.6ms)[0m  [1m[34mSELECT "options".* FROM "options" WHERE "options"."poll_id" = 2 /*application='RealTimePollingAppApi'*/[0m
+  [1m[36mVote Load (0.3ms)[0m  [1m[34mSELECT "votes".* FROM "votes" WHERE "votes"."user_id" = 1 AND "votes"."poll_id" = 2 AND "votes"."option_id" = 7 LIMIT 1 /*application='RealTimePollingAppApi'*/[0m
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[35mBEGIN /*application='RealTimePollingAppApi'*/[0m
+  [1m[36mVote Exists? (2.2ms)[0m  [1m[34mSELECT 1 AS one FROM "votes" WHERE "votes"."user_id" = 1 AND "votes"."poll_id" = 2 LIMIT 1 /*application='RealTimePollingAppApi'*/[0m
+  [1m[36mVote Create (0.5ms)[0m  [1m[32mINSERT INTO "votes" ("user_id", "option_id", "poll_id", "created_at", "updated_at") VALUES (1, 7, 2, '2025-08-07 14:20:41.744587', '2025-08-07 14:20:41.744587') RETURNING "id" /*application='RealTimePollingAppApi'*/[0m
+  [1m[36mVote Count (0.3ms)[0m  [1m[34mSELECT COUNT(*) FROM "votes" WHERE "votes"."option_id" = 7 /*application='RealTimePollingAppApi'*/[0m
+  ↳ app/models/vote.rb:28:in `update_option_votes_count'
+  [1m[36mOption Update (0.2ms)[0m  [1m[33mUPDATE "options" SET "votes_count" = 1 WHERE "options"."id" = 7 /*application='RealTimePollingAppApi'*/[0m
+  ↳ app/models/vote.rb:28:in `update_option_votes_count'
+  [1m[36mTRANSACTION (0.8ms)[0m  [1m[35mCOMMIT /*application='RealTimePollingAppApi'*/[0m
+  [1m[36mVote Load (0.4ms)[0m  [1m[34mSELECT "votes".* FROM "votes" WHERE "votes"."user_id" = 3 AND "votes"."poll_id" = 2 AND "votes"."option_id" = 8 LIMIT 1 /*application='RealTimePollingAppApi'*/[0m
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[35mBEGIN /*application='RealTimePollingAppApi'*/[0m
+  [1m[36mVote Exists? (2.0ms)[0m  [1m[34mSELECT 1 AS one FROM "votes" WHERE "votes"."user_id" = 3 AND "votes"."poll_id" = 2 LIMIT 1 /*application='RealTimePollingAppApi'*/[0m
+  [1m[36mVote Create (0.6ms)[0m  [1m[32mINSERT INTO "votes" ("user_id", "option_id", "poll_id", "created_at", "updated_at") VALUES (3, 8, 2, '2025-08-07 14:20:41.767845', '2025-08-07 14:20:41.767845') RETURNING "id" /*application='RealTimePollingAppApi'*/[0m
+  [1m[36mVote Count (0.3ms)[0m  [1m[34mSELECT COUNT(*) FROM "votes" WHERE "votes"."option_id" = 8 /*application='RealTimePollingAppApi'*/[0m
+  ↳ app/models/vote.rb:28:in `update_option_votes_count'
+  [1m[36mOption Update (0.3ms)[0m  [1m[33mUPDATE "options" SET "votes_count" = 1 WHERE "options"."id" = 8 /*application='RealTimePollingAppApi'*/[0m
+  ↳ app/models/vote.rb:28:in `update_option_votes_count'
+  [1m[36mTRANSACTION (0.7ms)[0m  [1m[35mCOMMIT /*application='RealTimePollingAppApi'*/[0m
+  [1m[36mOption Load (0.4ms)[0m  [1m[34mSELECT "options".* FROM "options" WHERE "options"."poll_id" = 3 /*application='RealTimePollingAppApi'*/[0m
+  [1m[36mVote Load (0.4ms)[0m  [1m[34mSELECT "votes".* FROM "votes" WHERE "votes"."user_id" = 1 AND "votes"."poll_id" = 3 AND "votes"."option_id" = 11 LIMIT 1 /*application='RealTimePollingAppApi'*/[0m
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[35mBEGIN /*application='RealTimePollingAppApi'*/[0m
+  [1m[36mVote Exists? (1.8ms)[0m  [1m[34mSELECT 1 AS one FROM "votes" WHERE "votes"."user_id" = 1 AND "votes"."poll_id" = 3 LIMIT 1 /*application='RealTimePollingAppApi'*/[0m
+  [1m[36mVote Create (0.5ms)[0m  [1m[32mINSERT INTO "votes" ("user_id", "option_id", "poll_id", "created_at", "updated_at") VALUES (1, 11, 3, '2025-08-07 14:20:41.806651', '2025-08-07 14:20:41.806651') RETURNING "id" /*application='RealTimePollingAppApi'*/[0m
+  [1m[36mVote Count (0.5ms)[0m  [1m[34mSELECT COUNT(*) FROM "votes" WHERE "votes"."option_id" = 11 /*application='RealTimePollingAppApi'*/[0m
+  ↳ app/models/vote.rb:28:in `update_option_votes_count'
+  [1m[36mOption Update (0.3ms)[0m  [1m[33mUPDATE "options" SET "votes_count" = 1 WHERE "options"."id" = 11 /*application='RealTimePollingAppApi'*/[0m
+  ↳ app/models/vote.rb:28:in `update_option_votes_count'
+  [1m[36mTRANSACTION (0.7ms)[0m  [1m[35mCOMMIT /*application='RealTimePollingAppApi'*/[0m
+  [1m[36mVote Load (0.3ms)[0m  [1m[34mSELECT "votes".* FROM "votes" WHERE "votes"."user_id" = 2 AND "votes"."poll_id" = 3 AND "votes"."option_id" = 15 LIMIT 1 /*application='RealTimePollingAppApi'*/[0m
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[35mBEGIN /*application='RealTimePollingAppApi'*/[0m
+  [1m[36mVote Exists? (1.4ms)[0m  [1m[34mSELECT 1 AS one FROM "votes" WHERE "votes"."user_id" = 2 AND "votes"."poll_id" = 3 LIMIT 1 /*application='RealTimePollingAppApi'*/[0m
+  [1m[36mVote Create (0.5ms)[0m  [1m[32mINSERT INTO "votes" ("user_id", "option_id", "poll_id", "created_at", "updated_at") VALUES (2, 15, 3, '2025-08-07 14:20:41.818039', '2025-08-07 14:20:41.818039') RETURNING "id" /*application='RealTimePollingAppApi'*/[0m
+  [1m[36mVote Count (0.5ms)[0m  [1m[34mSELECT COUNT(*) FROM "votes" WHERE "votes"."option_id" = 15 /*application='RealTimePollingAppApi'*/[0m
+  ↳ app/models/vote.rb:28:in `update_option_votes_count'
+  [1m[36mOption Update (0.3ms)[0m  [1m[33mUPDATE "options" SET "votes_count" = 1 WHERE "options"."id" = 15 /*application='RealTimePollingAppApi'*/[0m
+  ↳ app/models/vote.rb:28:in `update_option_votes_count'
+  [1m[36mTRANSACTION (0.7ms)[0m  [1m[35mCOMMIT /*application='RealTimePollingAppApi'*/[0m
+  [1m[36mPoll Load (0.3ms)[0m  [1m[34mSELECT "polls".* FROM "polls" /*application='RealTimePollingAppApi'*/[0m
+  [1m[36mOption Load (0.5ms)[0m  [1m[34mSELECT "options".* FROM "options" WHERE "options"."poll_id" = 1 /*application='RealTimePollingAppApi'*/[0m
+  [1m[36mVote Count (0.3ms)[0m  [1m[34mSELECT COUNT(*) FROM "votes" WHERE "votes"."option_id" = 1 /*application='RealTimePollingAppApi'*/[0m
+  [1m[36mOption Update (0.9ms)[0m  [1m[33mUPDATE "options" SET "votes_count" = 1 WHERE "options"."id" = 1 /*application='RealTimePollingAppApi'*/[0m
+  [1m[36mVote Count (0.3ms)[0m  [1m[34mSELECT COUNT(*) FROM "votes" WHERE "votes"."option_id" = 2 /*application='RealTimePollingAppApi'*/[0m
+  [1m[36mOption Update (0.9ms)[0m  [1m[33mUPDATE "options" SET "votes_count" = 1 WHERE "options"."id" = 2 /*application='RealTimePollingAppApi'*/[0m
+  [1m[36mVote Count (0.2ms)[0m  [1m[34mSELECT COUNT(*) FROM "votes" WHERE "votes"."option_id" = 3 /*application='RealTimePollingAppApi'*/[0m
+  [1m[36mOption Update (0.9ms)[0m  [1m[33mUPDATE "options" SET "votes_count" = 0 WHERE "options"."id" = 3 /*application='RealTimePollingAppApi'*/[0m
+  [1m[36mVote Count (0.3ms)[0m  [1m[34mSELECT COUNT(*) FROM "votes" WHERE "votes"."option_id" = 4 /*application='RealTimePollingAppApi'*/[0m
+  [1m[36mOption Update (0.9ms)[0m  [1m[33mUPDATE "options" SET "votes_count" = 0 WHERE "options"."id" = 4 /*application='RealTimePollingAppApi'*/[0m
+  [1m[36mVote Count (0.5ms)[0m  [1m[34mSELECT COUNT(*) FROM "votes" WHERE "votes"."option_id" = 5 /*application='RealTimePollingAppApi'*/[0m
+  [1m[36mOption Update (0.9ms)[0m  [1m[33mUPDATE "options" SET "votes_count" = 0 WHERE "options"."id" = 5 /*application='RealTimePollingAppApi'*/[0m
+  [1m[36mVote Count (0.3ms)[0m  [1m[34mSELECT COUNT(*) FROM "votes" WHERE "votes"."option_id" = 6 /*application='RealTimePollingAppApi'*/[0m
+  [1m[36mOption Update (0.9ms)[0m  [1m[33mUPDATE "options" SET "votes_count" = 0 WHERE "options"."id" = 6 /*application='RealTimePollingAppApi'*/[0m
+  [1m[36mOption Load (0.4ms)[0m  [1m[34mSELECT "options".* FROM "options" WHERE "options"."poll_id" = 2 /*application='RealTimePollingAppApi'*/[0m
+  [1m[36mVote Count (0.3ms)[0m  [1m[34mSELECT COUNT(*) FROM "votes" WHERE "votes"."option_id" = 7 /*application='RealTimePollingAppApi'*/[0m
+  [1m[36mOption Update (0.8ms)[0m  [1m[33mUPDATE "options" SET "votes_count" = 1 WHERE "options"."id" = 7 /*application='RealTimePollingAppApi'*/[0m
+  [1m[36mVote Count (0.5ms)[0m  [1m[34mSELECT COUNT(*) FROM "votes" WHERE "votes"."option_id" = 8 /*application='RealTimePollingAppApi'*/[0m
+  [1m[36mOption Update (0.9ms)[0m  [1m[33mUPDATE "options" SET "votes_count" = 1 WHERE "options"."id" = 8 /*application='RealTimePollingAppApi'*/[0m
+  [1m[36mVote Count (0.3ms)[0m  [1m[34mSELECT COUNT(*) FROM "votes" WHERE "votes"."option_id" = 9 /*application='RealTimePollingAppApi'*/[0m
+  [1m[36mOption Update (1.1ms)[0m  [1m[33mUPDATE "options" SET "votes_count" = 0 WHERE "options"."id" = 9 /*application='RealTimePollingAppApi'*/[0m
+  [1m[36mVote Count (0.5ms)[0m  [1m[34mSELECT COUNT(*) FROM "votes" WHERE "votes"."option_id" = 10 /*application='RealTimePollingAppApi'*/[0m
+  [1m[36mOption Update (0.9ms)[0m  [1m[33mUPDATE "options" SET "votes_count" = 0 WHERE "options"."id" = 10 /*application='RealTimePollingAppApi'*/[0m
+  [1m[36mOption Load (0.3ms)[0m  [1m[34mSELECT "options".* FROM "options" WHERE "options"."poll_id" = 3 /*application='RealTimePollingAppApi'*/[0m
+  [1m[36mVote Count (0.3ms)[0m  [1m[34mSELECT COUNT(*) FROM "votes" WHERE "votes"."option_id" = 11 /*application='RealTimePollingAppApi'*/[0m
+  [1m[36mOption Update (0.8ms)[0m  [1m[33mUPDATE "options" SET "votes_count" = 1 WHERE "options"."id" = 11 /*application='RealTimePollingAppApi'*/[0m
+  [1m[36mVote Count (0.5ms)[0m  [1m[34mSELECT COUNT(*) FROM "votes" WHERE "votes"."option_id" = 12 /*application='RealTimePollingAppApi'*/[0m
+  [1m[36mOption Update (0.8ms)[0m  [1m[33mUPDATE "options" SET "votes_count" = 0 WHERE "options"."id" = 12 /*application='RealTimePollingAppApi'*/[0m
+  [1m[36mVote Count (0.3ms)[0m  [1m[34mSELECT COUNT(*) FROM "votes" WHERE "votes"."option_id" = 13 /*application='RealTimePollingAppApi'*/[0m
+  [1m[36mOption Update (0.9ms)[0m  [1m[33mUPDATE "options" SET "votes_count" = 0 WHERE "options"."id" = 13 /*application='RealTimePollingAppApi'*/[0m
+  [1m[36mVote Count (0.3ms)[0m  [1m[34mSELECT COUNT(*) FROM "votes" WHERE "votes"."option_id" = 14 /*application='RealTimePollingAppApi'*/[0m
+  [1m[36mOption Update (1.0ms)[0m  [1m[33mUPDATE "options" SET "votes_count" = 0 WHERE "options"."id" = 14 /*application='RealTimePollingAppApi'*/[0m
+  [1m[36mVote Count (0.3ms)[0m  [1m[34mSELECT COUNT(*) FROM "votes" WHERE "votes"."option_id" = 15 /*application='RealTimePollingAppApi'*/[0m
+  [1m[36mOption Update (0.8ms)[0m  [1m[33mUPDATE "options" SET "votes_count" = 1 WHERE "options"."id" = 15 /*application='RealTimePollingAppApi'*/[0m
+  [1m[36mVote Count (0.3ms)[0m  [1m[34mSELECT COUNT(*) FROM "votes" WHERE "votes"."option_id" = 16 /*application='RealTimePollingAppApi'*/[0m
+  [1m[36mOption Update (1.0ms)[0m  [1m[33mUPDATE "options" SET "votes_count" = 0 WHERE "options"."id" = 16 /*application='RealTimePollingAppApi'*/[0m
+  [1m[36mVote Count (0.2ms)[0m  [1m[34mSELECT COUNT(*) FROM "votes" /*application='RealTimePollingAppApi'*/[0m
+Started POST "/api/v1/auth/register" for ::1 at 2025-08-07 17:26:46 +0300
+  [1m[36mActiveRecord::SchemaMigration Load (1.6ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC /*application='RealTimePollingAppApi'*/[0m
+Processing by Api::V1::AuthController#register as */*
+  Parameters: {"user"=>{"name"=>"Test User", "email"=>"[FILTERED]", "password"=>"[FILTERED]", "password_confirmation"=>"[FILTERED]"}, "auth"=>{"user"=>{"name"=>"Test User", "email"=>"[FILTERED]", "password"=>"[FILTERED]", "password_confirmation"=>"[FILTERED]"}}}
+  [1m[36mTRANSACTION (1.0ms)[0m  [1m[35mBEGIN /*action='register',application='RealTimePollingAppApi',controller='auth'*/[0m
+  ↳ app/controllers/api/v1/auth_controller.rb:7:in `register'
+  [1m[36mUser Exists? (9.6ms)[0m  [1m[34mSELECT 1 AS one FROM "users" WHERE LOWER("users"."email") = LOWER('test@example.com') LIMIT 1 /*action='register',application='RealTimePollingAppApi',controller='auth'*/[0m
+  ↳ app/controllers/api/v1/auth_controller.rb:7:in `register'
+  [1m[36mUser Create (1.4ms)[0m  [1m[32mINSERT INTO "users" ("name", "email", "password_digest", "created_at", "updated_at") VALUES ('Test User', 'test@example.com', '$2a$12$/m.wldsME.YFvE3jcGrKmeQvHXHq6XIRtcWbjN859gAlpMdrHvGme', '2025-08-07 14:26:47.306448', '2025-08-07 14:26:47.306448') RETURNING "id" /*action='register',application='RealTimePollingAppApi',controller='auth'*/[0m
+  ↳ app/controllers/api/v1/auth_controller.rb:7:in `register'
+  [1m[36mTRANSACTION (1.3ms)[0m  [1m[35mCOMMIT /*action='register',application='RealTimePollingAppApi',controller='auth'*/[0m
+  ↳ app/controllers/api/v1/auth_controller.rb:7:in `register'
+Completed 201 Created in 490ms (Views: 0.6ms | ActiveRecord: 37.5ms (2 queries, 0 cached) | GC: 0.0ms)
+
+
+Started POST "/api/v1/auth/login" for ::1 at 2025-08-07 17:26:47 +0300
+Processing by Api::V1::AuthController#login as */*
+  Parameters: {"email"=>"[FILTERED]", "password"=>"[FILTERED]", "auth"=>{"email"=>"[FILTERED]", "password"=>"[FILTERED]"}}
+  [1m[36mUser Load (1.9ms)[0m  [1m[34mSELECT "users".* FROM "users" WHERE "users"."email" = 'alice@example.com' LIMIT 1 /*action='login',application='RealTimePollingAppApi',controller='auth'*/[0m
+  ↳ app/controllers/api/v1/auth_controller.rb:20:in `login'
+Completed 200 OK in 367ms (Views: 0.2ms | ActiveRecord: 0.9ms (1 query, 0 cached) | GC: 0.0ms)
+
+
+Started GET "/api/v1/auth/me" for ::1 at 2025-08-07 17:26:47 +0300
+Processing by Api::V1::AuthController#me as */*
+  [1m[36mUser Load (2.7ms)[0m  [1m[34mSELECT "users".* FROM "users" WHERE "users"."id" = 1 LIMIT 1 /*action='me',application='RealTimePollingAppApi',controller='auth'*/[0m
+  ↳ app/controllers/application_controller.rb:16:in `authenticate_user'
+Completed 200 OK in 9ms (Views: 0.6ms | ActiveRecord: 0.7ms (1 query, 0 cached) | GC: 0.0ms)
+
+
+Started GET "/api/v1/polls" for ::1 at 2025-08-07 17:26:47 +0300
+Processing by Api::V1::PollsController#index as */*
+  [1m[36mUser Load (0.5ms)[0m  [1m[34mSELECT "users".* FROM "users" WHERE "users"."id" = 1 LIMIT 1 /*action='index',application='RealTimePollingAppApi',controller='polls'*/[0m
+  ↳ app/controllers/application_controller.rb:16:in `authenticate_user'
+  [1m[36mPoll Load (1.1ms)[0m  [1m[34mSELECT "polls".* FROM "polls" WHERE "polls"."active" = TRUE AND (expires_at > '2025-08-07 14:26:47.906027') ORDER BY "polls"."created_at" DESC /*action='index',application='RealTimePollingAppApi',controller='polls'*/[0m
+  ↳ app/controllers/api/v1/polls_controller.rb:11:in `map'
+  [1m[36mUser Load (0.6ms)[0m  [1m[34mSELECT "users".* FROM "users" WHERE "users"."id" IN (3, 2, 1) /*action='index',application='RealTimePollingAppApi',controller='polls'*/[0m
+  ↳ app/controllers/api/v1/polls_controller.rb:11:in `map'
+  [1m[36mOption Load (0.4ms)[0m  [1m[34mSELECT "options".* FROM "options" WHERE "options"."poll_id" IN (3, 2, 1) /*action='index',application='RealTimePollingAppApi',controller='polls'*/[0m
+  ↳ app/controllers/api/v1/polls_controller.rb:11:in `map'
+  [1m[36mVote Load (0.6ms)[0m  [1m[34mSELECT "votes".* FROM "votes" WHERE "votes"."poll_id" IN (3, 2, 1) /*action='index',application='RealTimePollingAppApi',controller='polls'*/[0m
+  ↳ app/controllers/api/v1/polls_controller.rb:11:in `map'
+  [1m[36mVote Count (0.3ms)[0m  [1m[34mSELECT COUNT(*) FROM "votes" WHERE "votes"."poll_id" = 3 /*action='index',application='RealTimePollingAppApi',controller='polls'*/[0m
+  ↳ app/models/poll.rb:21:in `total_votes'
+  [1m[36mCACHE Vote Count (0.6ms)[0m  [1m[34mSELECT COUNT(*) FROM "votes" WHERE "votes"."poll_id" = 3[0m
+  ↳ app/models/poll.rb:21:in `total_votes'
+  [1m[36mVote Count (0.3ms)[0m  [1m[34mSELECT COUNT(*) FROM "votes" WHERE "votes"."option_id" = 11 /*action='index',application='RealTimePollingAppApi',controller='polls'*/[0m
+  ↳ app/models/option.rb:14:in `vote_percentage'
+  [1m[36mCACHE Vote Count (0.1ms)[0m  [1m[34mSELECT COUNT(*) FROM "votes" WHERE "votes"."poll_id" = 3[0m
+  ↳ app/models/poll.rb:21:in `total_votes'
+  [1m[36mVote Count (0.3ms)[0m  [1m[34mSELECT COUNT(*) FROM "votes" WHERE "votes"."option_id" = 12 /*action='index',application='RealTimePollingAppApi',controller='polls'*/[0m
+  ↳ app/models/option.rb:14:in `vote_percentage'
+  [1m[36mCACHE Vote Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "votes" WHERE "votes"."poll_id" = 3[0m
+  ↳ app/models/poll.rb:21:in `total_votes'
+  [1m[36mVote Count (0.8ms)[0m  [1m[34mSELECT COUNT(*) FROM "votes" WHERE "votes"."option_id" = 13 /*action='index',application='RealTimePollingAppApi',controller='polls'*/[0m
+  ↳ app/models/option.rb:14:in `vote_percentage'
+  [1m[36mCACHE Vote Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "votes" WHERE "votes"."poll_id" = 3[0m
+  ↳ app/models/poll.rb:21:in `total_votes'
+  [1m[36mVote Count (0.4ms)[0m  [1m[34mSELECT COUNT(*) FROM "votes" WHERE "votes"."option_id" = 14 /*action='index',application='RealTimePollingAppApi',controller='polls'*/[0m
+  ↳ app/models/option.rb:14:in `vote_percentage'
+  [1m[36mCACHE Vote Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "votes" WHERE "votes"."poll_id" = 3[0m
+  ↳ app/models/poll.rb:21:in `total_votes'
+  [1m[36mVote Count (0.3ms)[0m  [1m[34mSELECT COUNT(*) FROM "votes" WHERE "votes"."option_id" = 15 /*action='index',application='RealTimePollingAppApi',controller='polls'*/[0m
+  ↳ app/models/option.rb:14:in `vote_percentage'
+  [1m[36mCACHE Vote Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "votes" WHERE "votes"."poll_id" = 3[0m
+  ↳ app/models/poll.rb:21:in `total_votes'
+  [1m[36mVote Count (3.3ms)[0m  [1m[34mSELECT COUNT(*) FROM "votes" WHERE "votes"."option_id" = 16 /*action='index',application='RealTimePollingAppApi',controller='polls'*/[0m
+  ↳ app/models/option.rb:14:in `vote_percentage'
+  [1m[36mOption Load (0.4ms)[0m  [1m[34mSELECT "options".* FROM "options" WHERE "options"."poll_id" = 3 /*action='index',application='RealTimePollingAppApi',controller='polls'*/[0m
+  ↳ app/models/poll.rb:25:in `map'
+  [1m[36mVote Load (0.5ms)[0m  [1m[34mSELECT "votes".* FROM "votes" WHERE "votes"."option_id" IN (11, 12, 13, 14, 15, 16) /*action='index',application='RealTimePollingAppApi',controller='polls'*/[0m
+  ↳ app/models/poll.rb:25:in `map'
+  [1m[36mCACHE Vote Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "votes" WHERE "votes"."option_id" = 11[0m
+  ↳ app/models/poll.rb:29:in `block in results'
+  [1m[36mCACHE Vote Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "votes" WHERE "votes"."poll_id" = 3[0m
+  ↳ app/models/poll.rb:21:in `total_votes'
+  [1m[36mCACHE Vote Count (0.1ms)[0m  [1m[34mSELECT COUNT(*) FROM "votes" WHERE "votes"."option_id" = 11[0m
+  ↳ app/models/poll.rb:30:in `block in results'
+  [1m[36mCACHE Vote Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "votes" WHERE "votes"."poll_id" = 3[0m
+  ↳ app/models/poll.rb:21:in `total_votes'
+  [1m[36mCACHE Vote Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "votes" WHERE "votes"."option_id" = 12[0m
+  ↳ app/models/poll.rb:29:in `block in results'
+  [1m[36mCACHE Vote Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "votes" WHERE "votes"."poll_id" = 3[0m
+  ↳ app/models/poll.rb:21:in `total_votes'
+  [1m[36mCACHE Vote Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "votes" WHERE "votes"."option_id" = 12[0m
+  ↳ app/models/poll.rb:30:in `block in results'
+  [1m[36mCACHE Vote Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "votes" WHERE "votes"."poll_id" = 3[0m
+  ↳ app/models/poll.rb:21:in `total_votes'
+  [1m[36mCACHE Vote Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "votes" WHERE "votes"."option_id" = 13[0m
+  ↳ app/models/poll.rb:29:in `block in results'
+  [1m[36mCACHE Vote Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "votes" WHERE "votes"."poll_id" = 3[0m
+  ↳ app/models/poll.rb:21:in `total_votes'
+  [1m[36mCACHE Vote Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "votes" WHERE "votes"."option_id" = 13[0m
+  ↳ app/models/poll.rb:30:in `block in results'
+  [1m[36mCACHE Vote Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "votes" WHERE "votes"."poll_id" = 3[0m
+  ↳ app/models/poll.rb:21:in `total_votes'
+  [1m[36mCACHE Vote Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "votes" WHERE "votes"."option_id" = 14[0m
+  ↳ app/models/poll.rb:29:in `block in results'
+  [1m[36mCACHE Vote Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "votes" WHERE "votes"."poll_id" = 3[0m
+  ↳ app/models/poll.rb:21:in `total_votes'
+  [1m[36mCACHE Vote Count (0.2ms)[0m  [1m[34mSELECT COUNT(*) FROM "votes" WHERE "votes"."option_id" = 14[0m
+  ↳ app/models/poll.rb:30:in `block in results'
+  [1m[36mCACHE Vote Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "votes" WHERE "votes"."poll_id" = 3[0m
+  ↳ app/models/poll.rb:21:in `total_votes'
+  [1m[36mCACHE Vote Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "votes" WHERE "votes"."option_id" = 15[0m
+  ↳ app/models/poll.rb:29:in `block in results'
+  [1m[36mCACHE Vote Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "votes" WHERE "votes"."poll_id" = 3[0m
+  ↳ app/models/poll.rb:21:in `total_votes'
+  [1m[36mCACHE Vote Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "votes" WHERE "votes"."option_id" = 15[0m
+  ↳ app/models/poll.rb:30:in `block in results'
+  [1m[36mCACHE Vote Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "votes" WHERE "votes"."poll_id" = 3[0m
+  ↳ app/models/poll.rb:21:in `total_votes'
+  [1m[36mCACHE Vote Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "votes" WHERE "votes"."option_id" = 16[0m
+  ↳ app/models/poll.rb:29:in `block in results'
+  [1m[36mCACHE Vote Count (0.1ms)[0m  [1m[34mSELECT COUNT(*) FROM "votes" WHERE "votes"."poll_id" = 3[0m
+  ↳ app/models/poll.rb:21:in `total_votes'
+  [1m[36mCACHE Vote Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "votes" WHERE "votes"."option_id" = 16[0m
+  ↳ app/models/poll.rb:30:in `block in results'
+  [1m[36mCACHE Vote Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "votes" WHERE "votes"."poll_id" = 3[0m
+  ↳ app/models/poll.rb:21:in `total_votes'
+  [1m[36mVote Count (0.3ms)[0m  [1m[34mSELECT COUNT(*) FROM "votes" WHERE "votes"."poll_id" = 2 /*action='index',application='RealTimePollingAppApi',controller='polls'*/[0m
+  ↳ app/models/poll.rb:21:in `total_votes'
+  [1m[36mCACHE Vote Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "votes" WHERE "votes"."poll_id" = 2[0m
+  ↳ app/models/poll.rb:21:in `total_votes'
+  [1m[36mVote Count (0.6ms)[0m  [1m[34mSELECT COUNT(*) FROM "votes" WHERE "votes"."option_id" = 7 /*action='index',application='RealTimePollingAppApi',controller='polls'*/[0m
+  ↳ app/models/option.rb:14:in `vote_percentage'
+  [1m[36mCACHE Vote Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "votes" WHERE "votes"."poll_id" = 2[0m
+  ↳ app/models/poll.rb:21:in `total_votes'
+  [1m[36mVote Count (0.4ms)[0m  [1m[34mSELECT COUNT(*) FROM "votes" WHERE "votes"."option_id" = 8 /*action='index',application='RealTimePollingAppApi',controller='polls'*/[0m
+  ↳ app/models/option.rb:14:in `vote_percentage'
+  [1m[36mCACHE Vote Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "votes" WHERE "votes"."poll_id" = 2[0m
+  ↳ app/models/poll.rb:21:in `total_votes'
+  [1m[36mVote Count (1.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "votes" WHERE "votes"."option_id" = 9 /*action='index',application='RealTimePollingAppApi',controller='polls'*/[0m
+  ↳ app/models/option.rb:14:in `vote_percentage'
+  [1m[36mCACHE Vote Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "votes" WHERE "votes"."poll_id" = 2[0m
+  ↳ app/models/poll.rb:21:in `total_votes'
+  [1m[36mVote Count (0.4ms)[0m  [1m[34mSELECT COUNT(*) FROM "votes" WHERE "votes"."option_id" = 10 /*action='index',application='RealTimePollingAppApi',controller='polls'*/[0m
+  ↳ app/models/option.rb:14:in `vote_percentage'
+  [1m[36mOption Load (0.4ms)[0m  [1m[34mSELECT "options".* FROM "options" WHERE "options"."poll_id" = 2 /*action='index',application='RealTimePollingAppApi',controller='polls'*/[0m
+  ↳ app/models/poll.rb:25:in `map'
+  [1m[36mVote Load (0.4ms)[0m  [1m[34mSELECT "votes".* FROM "votes" WHERE "votes"."option_id" IN (7, 8, 9, 10) /*action='index',application='RealTimePollingAppApi',controller='polls'*/[0m
+  ↳ app/models/poll.rb:25:in `map'
+  [1m[36mCACHE Vote Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "votes" WHERE "votes"."option_id" = 7[0m
+  ↳ app/models/poll.rb:29:in `block in results'
+  [1m[36mCACHE Vote Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "votes" WHERE "votes"."poll_id" = 2[0m
+  ↳ app/models/poll.rb:21:in `total_votes'
+  [1m[36mCACHE Vote Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "votes" WHERE "votes"."option_id" = 7[0m
+  ↳ app/models/poll.rb:30:in `block in results'
+  [1m[36mCACHE Vote Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "votes" WHERE "votes"."poll_id" = 2[0m
+  ↳ app/models/poll.rb:21:in `total_votes'
+  [1m[36mCACHE Vote Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "votes" WHERE "votes"."option_id" = 8[0m
+  ↳ app/models/poll.rb:29:in `block in results'
+  [1m[36mCACHE Vote Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "votes" WHERE "votes"."poll_id" = 2[0m
+  ↳ app/models/poll.rb:21:in `total_votes'
+  [1m[36mCACHE Vote Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "votes" WHERE "votes"."option_id" = 8[0m
+  ↳ app/models/poll.rb:30:in `block in results'
+  [1m[36mCACHE Vote Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "votes" WHERE "votes"."poll_id" = 2[0m
+  ↳ app/models/poll.rb:21:in `total_votes'
+  [1m[36mCACHE Vote Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "votes" WHERE "votes"."option_id" = 9[0m
+  ↳ app/models/poll.rb:29:in `block in results'
+  [1m[36mCACHE Vote Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "votes" WHERE "votes"."poll_id" = 2[0m
+  ↳ app/models/poll.rb:21:in `total_votes'
+  [1m[36mCACHE Vote Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "votes" WHERE "votes"."option_id" = 9[0m
+  ↳ app/models/poll.rb:30:in `block in results'
+  [1m[36mCACHE Vote Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "votes" WHERE "votes"."poll_id" = 2[0m
+  ↳ app/models/poll.rb:21:in `total_votes'
+  [1m[36mCACHE Vote Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "votes" WHERE "votes"."option_id" = 10[0m
+  ↳ app/models/poll.rb:29:in `block in results'
+  [1m[36mCACHE Vote Count (0.1ms)[0m  [1m[34mSELECT COUNT(*) FROM "votes" WHERE "votes"."poll_id" = 2[0m
+  ↳ app/models/poll.rb:21:in `total_votes'
+  [1m[36mCACHE Vote Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "votes" WHERE "votes"."option_id" = 10[0m
+  ↳ app/models/poll.rb:30:in `block in results'
+  [1m[36mCACHE Vote Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "votes" WHERE "votes"."poll_id" = 2[0m
+  ↳ app/models/poll.rb:21:in `total_votes'
+  [1m[36mVote Count (0.3ms)[0m  [1m[34mSELECT COUNT(*) FROM "votes" WHERE "votes"."poll_id" = 1 /*action='index',application='RealTimePollingAppApi',controller='polls'*/[0m
+  ↳ app/models/poll.rb:21:in `total_votes'
+  [1m[36mCACHE Vote Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "votes" WHERE "votes"."poll_id" = 1[0m
+  ↳ app/models/poll.rb:21:in `total_votes'
+  [1m[36mVote Count (0.5ms)[0m  [1m[34mSELECT COUNT(*) FROM "votes" WHERE "votes"."option_id" = 1 /*action='index',application='RealTimePollingAppApi',controller='polls'*/[0m
+  ↳ app/models/option.rb:14:in `vote_percentage'
+  [1m[36mCACHE Vote Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "votes" WHERE "votes"."poll_id" = 1[0m
+  ↳ app/models/poll.rb:21:in `total_votes'
+  [1m[36mVote Count (0.5ms)[0m  [1m[34mSELECT COUNT(*) FROM "votes" WHERE "votes"."option_id" = 2 /*action='index',application='RealTimePollingAppApi',controller='polls'*/[0m
+  ↳ app/models/option.rb:14:in `vote_percentage'
+  [1m[36mCACHE Vote Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "votes" WHERE "votes"."poll_id" = 1[0m
+  ↳ app/models/poll.rb:21:in `total_votes'
+  [1m[36mVote Count (0.4ms)[0m  [1m[34mSELECT COUNT(*) FROM "votes" WHERE "votes"."option_id" = 3 /*action='index',application='RealTimePollingAppApi',controller='polls'*/[0m
+  ↳ app/models/option.rb:14:in `vote_percentage'
+  [1m[36mCACHE Vote Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "votes" WHERE "votes"."poll_id" = 1[0m
+  ↳ app/models/poll.rb:21:in `total_votes'
+  [1m[36mVote Count (0.3ms)[0m  [1m[34mSELECT COUNT(*) FROM "votes" WHERE "votes"."option_id" = 4 /*action='index',application='RealTimePollingAppApi',controller='polls'*/[0m
+  ↳ app/models/option.rb:14:in `vote_percentage'
+  [1m[36mCACHE Vote Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "votes" WHERE "votes"."poll_id" = 1[0m
+  ↳ app/models/poll.rb:21:in `total_votes'
+  [1m[36mVote Count (0.3ms)[0m  [1m[34mSELECT COUNT(*) FROM "votes" WHERE "votes"."option_id" = 5 /*action='index',application='RealTimePollingAppApi',controller='polls'*/[0m
+  ↳ app/models/option.rb:14:in `vote_percentage'
+  [1m[36mCACHE Vote Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "votes" WHERE "votes"."poll_id" = 1[0m
+  ↳ app/models/poll.rb:21:in `total_votes'
+  [1m[36mVote Count (0.3ms)[0m  [1m[34mSELECT COUNT(*) FROM "votes" WHERE "votes"."option_id" = 6 /*action='index',application='RealTimePollingAppApi',controller='polls'*/[0m
+  ↳ app/models/option.rb:14:in `vote_percentage'
+  [1m[36mOption Load (0.4ms)[0m  [1m[34mSELECT "options".* FROM "options" WHERE "options"."poll_id" = 1 /*action='index',application='RealTimePollingAppApi',controller='polls'*/[0m
+  ↳ app/models/poll.rb:25:in `map'
+  [1m[36mVote Load (0.3ms)[0m  [1m[34mSELECT "votes".* FROM "votes" WHERE "votes"."option_id" IN (1, 2, 3, 4, 5, 6) /*action='index',application='RealTimePollingAppApi',controller='polls'*/[0m
+  ↳ app/models/poll.rb:25:in `map'
+  [1m[36mCACHE Vote Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "votes" WHERE "votes"."option_id" = 1[0m
+  ↳ app/models/poll.rb:29:in `block in results'
+  [1m[36mCACHE Vote Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "votes" WHERE "votes"."poll_id" = 1[0m
+  ↳ app/models/poll.rb:21:in `total_votes'
+  [1m[36mCACHE Vote Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "votes" WHERE "votes"."option_id" = 1[0m
+  ↳ app/models/poll.rb:30:in `block in results'
+  [1m[36mCACHE Vote Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "votes" WHERE "votes"."poll_id" = 1[0m
+  ↳ app/models/poll.rb:21:in `total_votes'
+  [1m[36mCACHE Vote Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "votes" WHERE "votes"."option_id" = 2[0m
+  ↳ app/models/poll.rb:29:in `block in results'
+  [1m[36mCACHE Vote Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "votes" WHERE "votes"."poll_id" = 1[0m
+  ↳ app/models/poll.rb:21:in `total_votes'
+  [1m[36mCACHE Vote Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "votes" WHERE "votes"."option_id" = 2[0m
+  ↳ app/models/poll.rb:30:in `block in results'
+  [1m[36mCACHE Vote Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "votes" WHERE "votes"."poll_id" = 1[0m
+  ↳ app/models/poll.rb:21:in `total_votes'
+  [1m[36mCACHE Vote Count (0.1ms)[0m  [1m[34mSELECT COUNT(*) FROM "votes" WHERE "votes"."option_id" = 3[0m
+  ↳ app/models/poll.rb:29:in `block in results'
+  [1m[36mCACHE Vote Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "votes" WHERE "votes"."poll_id" = 1[0m
+  ↳ app/models/poll.rb:21:in `total_votes'
+  [1m[36mCACHE Vote Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "votes" WHERE "votes"."option_id" = 3[0m
+  ↳ app/models/poll.rb:30:in `block in results'
+  [1m[36mCACHE Vote Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "votes" WHERE "votes"."poll_id" = 1[0m
+  ↳ app/models/poll.rb:21:in `total_votes'
+  [1m[36mCACHE Vote Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "votes" WHERE "votes"."option_id" = 4[0m
+  ↳ app/models/poll.rb:29:in `block in results'
+  [1m[36mCACHE Vote Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "votes" WHERE "votes"."poll_id" = 1[0m
+  ↳ app/models/poll.rb:21:in `total_votes'
+  [1m[36mCACHE Vote Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "votes" WHERE "votes"."option_id" = 4[0m
+  ↳ app/models/poll.rb:30:in `block in results'
+  [1m[36mCACHE Vote Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "votes" WHERE "votes"."poll_id" = 1[0m
+  ↳ app/models/poll.rb:21:in `total_votes'
+  [1m[36mCACHE Vote Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "votes" WHERE "votes"."option_id" = 5[0m
+  ↳ app/models/poll.rb:29:in `block in results'
+  [1m[36mCACHE Vote Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "votes" WHERE "votes"."poll_id" = 1[0m
+  ↳ app/models/poll.rb:21:in `total_votes'
+  [1m[36mCACHE Vote Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "votes" WHERE "votes"."option_id" = 5[0m
+  ↳ app/models/poll.rb:30:in `block in results'
+  [1m[36mCACHE Vote Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "votes" WHERE "votes"."poll_id" = 1[0m
+  ↳ app/models/poll.rb:21:in `total_votes'
+  [1m[36mCACHE Vote Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "votes" WHERE "votes"."option_id" = 6[0m
+  ↳ app/models/poll.rb:29:in `block in results'
+  [1m[36mCACHE Vote Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "votes" WHERE "votes"."poll_id" = 1[0m
+  ↳ app/models/poll.rb:21:in `total_votes'
+  [1m[36mCACHE Vote Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "votes" WHERE "votes"."option_id" = 6[0m
+  ↳ app/models/poll.rb:30:in `block in results'
+  [1m[36mCACHE Vote Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "votes" WHERE "votes"."poll_id" = 1[0m
+  ↳ app/models/poll.rb:21:in `total_votes'
+Completed 200 OK in 677ms (Views: 11.0ms | ActiveRecord: 28.2ms (110 queries, 80 cached) | GC: 50.1ms)
+
+
+Started POST "/api/v1/polls" for ::1 at 2025-08-07 17:26:48 +0300
+Processing by Api::V1::PollsController#create as */*
+  Parameters: {"poll"=>{"title"=>"What is your favorite IDE?", "description"=>"Choose your preferred integrated development environment", "expires_at"=>"2025-08-14T14:00:00Z"}, "options"=>["VS Code", "IntelliJ IDEA", "Vim", "Sublime Text"]}
+  [1m[36mUser Load (0.4ms)[0m  [1m[34mSELECT "users".* FROM "users" WHERE "users"."id" = 1 LIMIT 1 /*action='create',application='RealTimePollingAppApi',controller='polls'*/[0m
+  ↳ app/controllers/application_controller.rb:16:in `authenticate_user'
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[35mBEGIN /*action='create',application='RealTimePollingAppApi',controller='polls'*/[0m
+  ↳ app/controllers/api/v1/polls_controller.rb:22:in `create'
+  [1m[36mPoll Create (3.5ms)[0m  [1m[32mINSERT INTO "polls" ("title", "description", "user_id", "active", "expires_at", "created_at", "updated_at") VALUES ('What is your favorite IDE?', 'Choose your preferred integrated development environment', 1, TRUE, '2025-08-14 14:00:00', '2025-08-07 14:26:48.592166', '2025-08-07 14:26:48.592166') RETURNING "id" /*action='create',application='RealTimePollingAppApi',controller='polls'*/[0m
+  ↳ app/controllers/api/v1/polls_controller.rb:22:in `create'
+  [1m[36mTRANSACTION (1.1ms)[0m  [1m[35mCOMMIT /*action='create',application='RealTimePollingAppApi',controller='polls'*/[0m
+  ↳ app/controllers/api/v1/polls_controller.rb:22:in `create'
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[35mBEGIN /*action='create',application='RealTimePollingAppApi',controller='polls'*/[0m
+  ↳ app/controllers/api/v1/polls_controller.rb:29:in `create'
+  [1m[36mOption Create (2.5ms)[0m  [1m[32mINSERT INTO "options" ("text", "poll_id", "votes_count", "created_at", "updated_at") VALUES ('VS Code', 4, 0, '2025-08-07 14:26:48.623876', '2025-08-07 14:26:48.623876') RETURNING "id" /*action='create',application='RealTimePollingAppApi',controller='polls'*/[0m
+  ↳ app/controllers/api/v1/polls_controller.rb:29:in `create'
+  [1m[36mTRANSACTION (0.8ms)[0m  [1m[35mCOMMIT /*action='create',application='RealTimePollingAppApi',controller='polls'*/[0m
+  ↳ app/controllers/api/v1/polls_controller.rb:29:in `create'
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[35mBEGIN /*action='create',application='RealTimePollingAppApi',controller='polls'*/[0m
+  ↳ app/controllers/api/v1/polls_controller.rb:29:in `create'
+  [1m[36mOption Create (2.3ms)[0m  [1m[32mINSERT INTO "options" ("text", "poll_id", "votes_count", "created_at", "updated_at") VALUES ('IntelliJ IDEA', 4, 0, '2025-08-07 14:26:48.641904', '2025-08-07 14:26:48.641904') RETURNING "id" /*action='create',application='RealTimePollingAppApi',controller='polls'*/[0m
+  ↳ app/controllers/api/v1/polls_controller.rb:29:in `create'
+  [1m[36mTRANSACTION (0.8ms)[0m  [1m[35mCOMMIT /*action='create',application='RealTimePollingAppApi',controller='polls'*/[0m
+  ↳ app/controllers/api/v1/polls_controller.rb:29:in `create'
+  [1m[36mTRANSACTION (0.5ms)[0m  [1m[35mBEGIN /*action='create',application='RealTimePollingAppApi',controller='polls'*/[0m
+  ↳ app/controllers/api/v1/polls_controller.rb:29:in `create'
+  [1m[36mOption Create (2.7ms)[0m  [1m[32mINSERT INTO "options" ("text", "poll_id", "votes_count", "created_at", "updated_at") VALUES ('Vim', 4, 0, '2025-08-07 14:26:48.664037', '2025-08-07 14:26:48.664037') RETURNING "id" /*action='create',application='RealTimePollingAppApi',controller='polls'*/[0m
+  ↳ app/controllers/api/v1/polls_controller.rb:29:in `create'
+  [1m[36mTRANSACTION (1.6ms)[0m  [1m[35mCOMMIT /*action='create',application='RealTimePollingAppApi',controller='polls'*/[0m
+  ↳ app/controllers/api/v1/polls_controller.rb:29:in `create'
+  [1m[36mTRANSACTION (0.3ms)[0m  [1m[35mBEGIN /*action='create',application='RealTimePollingAppApi',controller='polls'*/[0m
+  ↳ app/controllers/api/v1/polls_controller.rb:29:in `create'
+  [1m[36mOption Create (3.3ms)[0m  [1m[32mINSERT INTO "options" ("text", "poll_id", "votes_count", "created_at", "updated_at") VALUES ('Sublime Text', 4, 0, '2025-08-07 14:26:48.692769', '2025-08-07 14:26:48.692769') RETURNING "id" /*action='create',application='RealTimePollingAppApi',controller='polls'*/[0m
+  ↳ app/controllers/api/v1/polls_controller.rb:29:in `create'
+  [1m[36mTRANSACTION (1.1ms)[0m  [1m[35mCOMMIT /*action='create',application='RealTimePollingAppApi',controller='polls'*/[0m
+  ↳ app/controllers/api/v1/polls_controller.rb:29:in `create'
+  [1m[36mPoll Load (0.5ms)[0m  [1m[34mSELECT "polls".* FROM "polls" WHERE "polls"."id" = 4 LIMIT 1 /*action='create',application='RealTimePollingAppApi',controller='polls'*/[0m
+  ↳ app/controllers/api/v1/polls_controller.rb:37:in `create'
+  [1m[36mVote Count (0.4ms)[0m  [1m[34mSELECT COUNT(*) FROM "votes" WHERE "votes"."poll_id" = 4 /*action='create',application='RealTimePollingAppApi',controller='polls'*/[0m
+  ↳ app/models/poll.rb:21:in `total_votes'
+  [1m[36mUser Load (0.4ms)[0m  [1m[34mSELECT "users".* FROM "users" WHERE "users"."id" = 1 LIMIT 1 /*action='create',application='RealTimePollingAppApi',controller='polls'*/[0m
+  ↳ app/controllers/api/v1/polls_controller.rb:120:in `poll_response'
+  [1m[36mOption Load (0.4ms)[0m  [1m[34mSELECT "options".* FROM "options" WHERE "options"."poll_id" = 4 /*action='create',application='RealTimePollingAppApi',controller='polls'*/[0m
+  ↳ app/controllers/api/v1/polls_controller.rb:123:in `map'
+  [1m[36mCACHE Vote Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "votes" WHERE "votes"."poll_id" = 4[0m
+  ↳ app/models/poll.rb:21:in `total_votes'
+  [1m[36mCACHE Vote Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "votes" WHERE "votes"."poll_id" = 4[0m
+  ↳ app/models/poll.rb:21:in `total_votes'
+  [1m[36mCACHE Vote Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "votes" WHERE "votes"."poll_id" = 4[0m
+  ↳ app/models/poll.rb:21:in `total_votes'
+  [1m[36mCACHE Vote Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "votes" WHERE "votes"."poll_id" = 4[0m
+  ↳ app/models/poll.rb:21:in `total_votes'
+  [1m[36mCACHE Option Load (0.0ms)[0m  [1m[34mSELECT "options".* FROM "options" WHERE "options"."poll_id" = 4[0m
+  ↳ app/models/poll.rb:25:in `map'
+  [1m[36mVote Load (0.6ms)[0m  [1m[34mSELECT "votes".* FROM "votes" WHERE "votes"."option_id" IN (17, 18, 19, 20) /*action='create',application='RealTimePollingAppApi',controller='polls'*/[0m
+  ↳ app/models/poll.rb:25:in `map'
+  [1m[36mVote Count (0.4ms)[0m  [1m[34mSELECT COUNT(*) FROM "votes" WHERE "votes"."option_id" = 17 /*action='create',application='RealTimePollingAppApi',controller='polls'*/[0m
+  ↳ app/models/poll.rb:29:in `block in results'
+  [1m[36mCACHE Vote Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "votes" WHERE "votes"."poll_id" = 4[0m
+  ↳ app/models/poll.rb:21:in `total_votes'
+  [1m[36mVote Count (0.4ms)[0m  [1m[34mSELECT COUNT(*) FROM "votes" WHERE "votes"."option_id" = 18 /*action='create',application='RealTimePollingAppApi',controller='polls'*/[0m
+  ↳ app/models/poll.rb:29:in `block in results'
+  [1m[36mCACHE Vote Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "votes" WHERE "votes"."poll_id" = 4[0m
+  ↳ app/models/poll.rb:21:in `total_votes'
+  [1m[36mVote Count (0.4ms)[0m  [1m[34mSELECT COUNT(*) FROM "votes" WHERE "votes"."option_id" = 19 /*action='create',application='RealTimePollingAppApi',controller='polls'*/[0m
+  ↳ app/models/poll.rb:29:in `block in results'
+  [1m[36mCACHE Vote Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "votes" WHERE "votes"."poll_id" = 4[0m
+  ↳ app/models/poll.rb:21:in `total_votes'
+  [1m[36mVote Count (0.3ms)[0m  [1m[34mSELECT COUNT(*) FROM "votes" WHERE "votes"."option_id" = 20 /*action='create',application='RealTimePollingAppApi',controller='polls'*/[0m
+  ↳ app/models/poll.rb:29:in `block in results'
+  [1m[36mCACHE Vote Count (0.6ms)[0m  [1m[34mSELECT COUNT(*) FROM "votes" WHERE "votes"."poll_id" = 4[0m
+  ↳ app/models/poll.rb:21:in `total_votes'
+[ActionCable] Broadcasting to polls_channel: {:type=>"poll_created", :poll=>{:id=>4, :title=>"What is your favorite IDE?", :description=>"Choose your preferred integrated development environment", :active=>true, :expires_at=>2025-08-14 14:00:00.000000000 UTC +00:00, :expired=>false, :total_votes=>0, :created_at=>2025-08-07 14:26:48.59216600...
+  [1m[36mCACHE Vote Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "votes" WHERE "votes"."poll_id" = 4[0m
+  ↳ app/models/poll.rb:21:in `total_votes'
+  [1m[36mCACHE Vote Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "votes" WHERE "votes"."poll_id" = 4[0m
+  ↳ app/models/poll.rb:21:in `total_votes'
+  [1m[36mCACHE Vote Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "votes" WHERE "votes"."poll_id" = 4[0m
+  ↳ app/models/poll.rb:21:in `total_votes'
+  [1m[36mCACHE Vote Count (0.2ms)[0m  [1m[34mSELECT COUNT(*) FROM "votes" WHERE "votes"."poll_id" = 4[0m
+  ↳ app/models/poll.rb:21:in `total_votes'
+  [1m[36mCACHE Vote Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "votes" WHERE "votes"."poll_id" = 4[0m
+  ↳ app/models/poll.rb:21:in `total_votes'
+  [1m[36mCACHE Option Load (0.2ms)[0m  [1m[34mSELECT "options".* FROM "options" WHERE "options"."poll_id" = 4[0m
+  ↳ app/models/poll.rb:25:in `map'
+  [1m[36mCACHE Vote Load (0.0ms)[0m  [1m[34mSELECT "votes".* FROM "votes" WHERE "votes"."option_id" IN (17, 18, 19, 20)[0m
+  ↳ app/models/poll.rb:25:in `map'
+  [1m[36mCACHE Vote Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "votes" WHERE "votes"."option_id" = 17[0m
+  ↳ app/models/poll.rb:29:in `block in results'
+  [1m[36mCACHE Vote Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "votes" WHERE "votes"."poll_id" = 4[0m
+  ↳ app/models/poll.rb:21:in `total_votes'
+  [1m[36mCACHE Vote Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "votes" WHERE "votes"."option_id" = 18[0m
+  ↳ app/models/poll.rb:29:in `block in results'
+  [1m[36mCACHE Vote Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "votes" WHERE "votes"."poll_id" = 4[0m
+  ↳ app/models/poll.rb:21:in `total_votes'
+  [1m[36mCACHE Vote Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "votes" WHERE "votes"."option_id" = 19[0m
+  ↳ app/models/poll.rb:29:in `block in results'
+  [1m[36mCACHE Vote Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "votes" WHERE "votes"."poll_id" = 4[0m
+  ↳ app/models/poll.rb:21:in `total_votes'
+  [1m[36mCACHE Vote Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "votes" WHERE "votes"."option_id" = 20[0m
+  ↳ app/models/poll.rb:29:in `block in results'
+  [1m[36mCACHE Vote Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "votes" WHERE "votes"."poll_id" = 4[0m
+  ↳ app/models/poll.rb:21:in `total_votes'
+Completed 201 Created in 333ms (Views: 0.8ms | ActiveRecord: 25.2ms (39 queries, 24 cached) | GC: 26.9ms)
+
+
+Started GET "/api/v1/polls/4" for ::1 at 2025-08-07 17:26:48 +0300
+Processing by Api::V1::PollsController#show as */*
+  Parameters: {"id"=>"4"}
+  [1m[36mUser Load (0.5ms)[0m  [1m[34mSELECT "users".* FROM "users" WHERE "users"."id" = 1 LIMIT 1 /*action='show',application='RealTimePollingAppApi',controller='polls'*/[0m
+  ↳ app/controllers/application_controller.rb:16:in `authenticate_user'
+  [1m[36mPoll Load (0.4ms)[0m  [1m[34mSELECT "polls".* FROM "polls" WHERE "polls"."id" = 4 LIMIT 1 /*action='show',application='RealTimePollingAppApi',controller='polls'*/[0m
+  ↳ app/controllers/api/v1/polls_controller.rb:99:in `set_poll'
+  [1m[36mVote Count (2.4ms)[0m  [1m[34mSELECT COUNT(*) FROM "votes" WHERE "votes"."poll_id" = 4 /*action='show',application='RealTimePollingAppApi',controller='polls'*/[0m
+  ↳ app/models/poll.rb:21:in `total_votes'
+  [1m[36mCACHE User Load (0.0ms)[0m  [1m[34mSELECT "users".* FROM "users" WHERE "users"."id" = 1 LIMIT 1[0m
+  ↳ app/controllers/api/v1/polls_controller.rb:120:in `poll_response'
+  [1m[36mOption Load (0.4ms)[0m  [1m[34mSELECT "options".* FROM "options" WHERE "options"."poll_id" = 4 /*action='show',application='RealTimePollingAppApi',controller='polls'*/[0m
+  ↳ app/controllers/api/v1/polls_controller.rb:123:in `map'
+  [1m[36mCACHE Vote Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "votes" WHERE "votes"."poll_id" = 4[0m
+  ↳ app/models/poll.rb:21:in `total_votes'
+  [1m[36mCACHE Vote Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "votes" WHERE "votes"."poll_id" = 4[0m
+  ↳ app/models/poll.rb:21:in `total_votes'
+  [1m[36mCACHE Vote Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "votes" WHERE "votes"."poll_id" = 4[0m
+  ↳ app/models/poll.rb:21:in `total_votes'
+  [1m[36mCACHE Vote Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "votes" WHERE "votes"."poll_id" = 4[0m
+  ↳ app/models/poll.rb:21:in `total_votes'
+  [1m[36mCACHE Option Load (0.0ms)[0m  [1m[34mSELECT "options".* FROM "options" WHERE "options"."poll_id" = 4[0m
+  ↳ app/models/poll.rb:25:in `map'
+  [1m[36mVote Load (1.2ms)[0m  [1m[34mSELECT "votes".* FROM "votes" WHERE "votes"."option_id" IN (17, 18, 19, 20) /*action='show',application='RealTimePollingAppApi',controller='polls'*/[0m
+  ↳ app/models/poll.rb:25:in `map'
+  [1m[36mVote Count (1.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "votes" WHERE "votes"."option_id" = 17 /*action='show',application='RealTimePollingAppApi',controller='polls'*/[0m
+  ↳ app/models/poll.rb:29:in `block in results'
+  [1m[36mCACHE Vote Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "votes" WHERE "votes"."poll_id" = 4[0m
+  ↳ app/models/poll.rb:21:in `total_votes'
+  [1m[36mVote Count (3.1ms)[0m  [1m[34mSELECT COUNT(*) FROM "votes" WHERE "votes"."option_id" = 18 /*action='show',application='RealTimePollingAppApi',controller='polls'*/[0m
+  ↳ app/models/poll.rb:29:in `block in results'
+  [1m[36mCACHE Vote Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "votes" WHERE "votes"."poll_id" = 4[0m
+  ↳ app/models/poll.rb:21:in `total_votes'
+  [1m[36mVote Count (0.4ms)[0m  [1m[34mSELECT COUNT(*) FROM "votes" WHERE "votes"."option_id" = 19 /*action='show',application='RealTimePollingAppApi',controller='polls'*/[0m
+  ↳ app/models/poll.rb:29:in `block in results'
+  [1m[36mCACHE Vote Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "votes" WHERE "votes"."poll_id" = 4[0m
+  ↳ app/models/poll.rb:21:in `total_votes'
+  [1m[36mVote Count (0.7ms)[0m  [1m[34mSELECT COUNT(*) FROM "votes" WHERE "votes"."option_id" = 20 /*action='show',application='RealTimePollingAppApi',controller='polls'*/[0m
+  ↳ app/models/poll.rb:29:in `block in results'
+  [1m[36mCACHE Vote Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "votes" WHERE "votes"."poll_id" = 4[0m
+  ↳ app/models/poll.rb:21:in `total_votes'
+Completed 200 OK in 92ms (Views: 1.7ms | ActiveRecord: 10.1ms (19 queries, 10 cached) | GC: 1.6ms)
+
+
+Started POST "/api/v1/polls/4/votes" for ::1 at 2025-08-07 17:26:49 +0300
+Processing by Api::V1::VotesController#create as */*
+  Parameters: {"vote"=>{"option_id"=>1}, "poll_id"=>"4"}
+  [1m[36mUser Load (0.8ms)[0m  [1m[34mSELECT "users".* FROM "users" WHERE "users"."id" = 1 LIMIT 1 /*action='create',application='RealTimePollingAppApi',controller='votes'*/[0m
+  ↳ app/controllers/application_controller.rb:16:in `authenticate_user'
+  [1m[36mPoll Load (0.6ms)[0m  [1m[34mSELECT "polls".* FROM "polls" WHERE "polls"."id" = 4 LIMIT 1 /*action='create',application='RealTimePollingAppApi',controller='votes'*/[0m
+  ↳ app/controllers/api/v1/votes_controller.rb:97:in `set_poll'
+  [1m[36mOption Load (0.4ms)[0m  [1m[34mSELECT "options".* FROM "options" WHERE "options"."poll_id" = 4 AND "options"."id" = 1 LIMIT 1 /*action='create',application='RealTimePollingAppApi',controller='votes'*/[0m
+  ↳ app/controllers/api/v1/votes_controller.rb:103:in `set_option'
+Filter chain halted as :set_option rendered or redirected
+Completed 404 Not Found in 26ms (Views: 0.3ms | ActiveRecord: 1.7ms (3 queries, 0 cached) | GC: 0.0ms)
+
+
+Started GET "/api/v1/polls/my_polls" for ::1 at 2025-08-07 17:26:49 +0300
+Processing by Api::V1::PollsController#my_polls as */*
+  [1m[36mUser Load (0.7ms)[0m  [1m[34mSELECT "users".* FROM "users" WHERE "users"."id" = 1 LIMIT 1 /*action='my_polls',application='RealTimePollingAppApi',controller='polls'*/[0m
+  ↳ app/controllers/application_controller.rb:16:in `authenticate_user'
+  [1m[36mPoll Load (1.3ms)[0m  [1m[34mSELECT "polls".* FROM "polls" WHERE "polls"."user_id" = 1 ORDER BY "polls"."created_at" DESC /*action='my_polls',application='RealTimePollingAppApi',controller='polls'*/[0m
+  ↳ app/controllers/api/v1/polls_controller.rb:92:in `map'
+  [1m[36mOption Load (1.1ms)[0m  [1m[34mSELECT "options".* FROM "options" WHERE "options"."poll_id" IN (4, 1) /*action='my_polls',application='RealTimePollingAppApi',controller='polls'*/[0m
+  ↳ app/controllers/api/v1/polls_controller.rb:92:in `map'
+  [1m[36mVote Load (1.5ms)[0m  [1m[34mSELECT "votes".* FROM "votes" WHERE "votes"."poll_id" IN (4, 1) /*action='my_polls',application='RealTimePollingAppApi',controller='polls'*/[0m
+  ↳ app/controllers/api/v1/polls_controller.rb:92:in `map'
+  [1m[36mVote Count (2.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "votes" WHERE "votes"."poll_id" = 4 /*action='my_polls',application='RealTimePollingAppApi',controller='polls'*/[0m
+  ↳ app/models/poll.rb:21:in `total_votes'
+  [1m[36mCACHE Vote Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "votes" WHERE "votes"."poll_id" = 4[0m
+  ↳ app/models/poll.rb:21:in `total_votes'
+  [1m[36mCACHE Vote Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "votes" WHERE "votes"."poll_id" = 4[0m
+  ↳ app/models/poll.rb:21:in `total_votes'
+  [1m[36mCACHE Vote Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "votes" WHERE "votes"."poll_id" = 4[0m
+  ↳ app/models/poll.rb:21:in `total_votes'
+  [1m[36mCACHE Vote Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "votes" WHERE "votes"."poll_id" = 4[0m
+  ↳ app/models/poll.rb:21:in `total_votes'
+  [1m[36mOption Load (0.5ms)[0m  [1m[34mSELECT "options".* FROM "options" WHERE "options"."poll_id" = 4 /*action='my_polls',application='RealTimePollingAppApi',controller='polls'*/[0m
+  ↳ app/models/poll.rb:25:in `map'
+  [1m[36mVote Load (0.4ms)[0m  [1m[34mSELECT "votes".* FROM "votes" WHERE "votes"."option_id" IN (17, 18, 19, 20) /*action='my_polls',application='RealTimePollingAppApi',controller='polls'*/[0m
+  ↳ app/models/poll.rb:25:in `map'
+  [1m[36mVote Count (0.5ms)[0m  [1m[34mSELECT COUNT(*) FROM "votes" WHERE "votes"."option_id" = 17 /*action='my_polls',application='RealTimePollingAppApi',controller='polls'*/[0m
+  ↳ app/models/poll.rb:29:in `block in results'
+  [1m[36mCACHE Vote Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "votes" WHERE "votes"."poll_id" = 4[0m
+  ↳ app/models/poll.rb:21:in `total_votes'
+  [1m[36mVote Count (0.4ms)[0m  [1m[34mSELECT COUNT(*) FROM "votes" WHERE "votes"."option_id" = 18 /*action='my_polls',application='RealTimePollingAppApi',controller='polls'*/[0m
+  ↳ app/models/poll.rb:29:in `block in results'
+  [1m[36mCACHE Vote Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "votes" WHERE "votes"."poll_id" = 4[0m
+  ↳ app/models/poll.rb:21:in `total_votes'
+  [1m[36mVote Count (0.4ms)[0m  [1m[34mSELECT COUNT(*) FROM "votes" WHERE "votes"."option_id" = 19 /*action='my_polls',application='RealTimePollingAppApi',controller='polls'*/[0m
+  ↳ app/models/poll.rb:29:in `block in results'
+  [1m[36mCACHE Vote Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "votes" WHERE "votes"."poll_id" = 4[0m
+  ↳ app/models/poll.rb:21:in `total_votes'
+  [1m[36mVote Count (0.4ms)[0m  [1m[34mSELECT COUNT(*) FROM "votes" WHERE "votes"."option_id" = 20 /*action='my_polls',application='RealTimePollingAppApi',controller='polls'*/[0m
+  ↳ app/models/poll.rb:29:in `block in results'
+  [1m[36mCACHE Vote Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "votes" WHERE "votes"."poll_id" = 4[0m
+  ↳ app/models/poll.rb:21:in `total_votes'
+  [1m[36mVote Count (0.4ms)[0m  [1m[34mSELECT COUNT(*) FROM "votes" WHERE "votes"."poll_id" = 1 /*action='my_polls',application='RealTimePollingAppApi',controller='polls'*/[0m
+  ↳ app/models/poll.rb:21:in `total_votes'
+  [1m[36mCACHE Vote Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "votes" WHERE "votes"."poll_id" = 1[0m
+  ↳ app/models/poll.rb:21:in `total_votes'
+  [1m[36mVote Count (0.4ms)[0m  [1m[34mSELECT COUNT(*) FROM "votes" WHERE "votes"."option_id" = 1 /*action='my_polls',application='RealTimePollingAppApi',controller='polls'*/[0m
+  ↳ app/models/option.rb:14:in `vote_percentage'
+  [1m[36mCACHE Vote Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "votes" WHERE "votes"."poll_id" = 1[0m
+  ↳ app/models/poll.rb:21:in `total_votes'
+  [1m[36mVote Count (0.4ms)[0m  [1m[34mSELECT COUNT(*) FROM "votes" WHERE "votes"."option_id" = 2 /*action='my_polls',application='RealTimePollingAppApi',controller='polls'*/[0m
+  ↳ app/models/option.rb:14:in `vote_percentage'
+  [1m[36mCACHE Vote Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "votes" WHERE "votes"."poll_id" = 1[0m
+  ↳ app/models/poll.rb:21:in `total_votes'
+  [1m[36mVote Count (0.4ms)[0m  [1m[34mSELECT COUNT(*) FROM "votes" WHERE "votes"."option_id" = 3 /*action='my_polls',application='RealTimePollingAppApi',controller='polls'*/[0m
+  ↳ app/models/option.rb:14:in `vote_percentage'
+  [1m[36mCACHE Vote Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "votes" WHERE "votes"."poll_id" = 1[0m
+  ↳ app/models/poll.rb:21:in `total_votes'
+  [1m[36mVote Count (0.4ms)[0m  [1m[34mSELECT COUNT(*) FROM "votes" WHERE "votes"."option_id" = 4 /*action='my_polls',application='RealTimePollingAppApi',controller='polls'*/[0m
+  ↳ app/models/option.rb:14:in `vote_percentage'
+  [1m[36mCACHE Vote Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "votes" WHERE "votes"."poll_id" = 1[0m
+  ↳ app/models/poll.rb:21:in `total_votes'
+  [1m[36mVote Count (0.4ms)[0m  [1m[34mSELECT COUNT(*) FROM "votes" WHERE "votes"."option_id" = 5 /*action='my_polls',application='RealTimePollingAppApi',controller='polls'*/[0m
+  ↳ app/models/option.rb:14:in `vote_percentage'
+  [1m[36mCACHE Vote Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "votes" WHERE "votes"."poll_id" = 1[0m
+  ↳ app/models/poll.rb:21:in `total_votes'
+  [1m[36mVote Count (0.3ms)[0m  [1m[34mSELECT COUNT(*) FROM "votes" WHERE "votes"."option_id" = 6 /*action='my_polls',application='RealTimePollingAppApi',controller='polls'*/[0m
+  ↳ app/models/option.rb:14:in `vote_percentage'
+  [1m[36mOption Load (0.4ms)[0m  [1m[34mSELECT "options".* FROM "options" WHERE "options"."poll_id" = 1 /*action='my_polls',application='RealTimePollingAppApi',controller='polls'*/[0m
+  ↳ app/models/poll.rb:25:in `map'
+  [1m[36mVote Load (0.4ms)[0m  [1m[34mSELECT "votes".* FROM "votes" WHERE "votes"."option_id" IN (1, 2, 3, 4, 5, 6) /*action='my_polls',application='RealTimePollingAppApi',controller='polls'*/[0m
+  ↳ app/models/poll.rb:25:in `map'
+  [1m[36mCACHE Vote Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "votes" WHERE "votes"."option_id" = 1[0m
+  ↳ app/models/poll.rb:29:in `block in results'
+  [1m[36mCACHE Vote Count (0.2ms)[0m  [1m[34mSELECT COUNT(*) FROM "votes" WHERE "votes"."poll_id" = 1[0m
+  ↳ app/models/poll.rb:21:in `total_votes'
+  [1m[36mCACHE Vote Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "votes" WHERE "votes"."option_id" = 1[0m
+  ↳ app/models/poll.rb:30:in `block in results'
+  [1m[36mCACHE Vote Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "votes" WHERE "votes"."poll_id" = 1[0m
+  ↳ app/models/poll.rb:21:in `total_votes'
+  [1m[36mCACHE Vote Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "votes" WHERE "votes"."option_id" = 2[0m
+  ↳ app/models/poll.rb:29:in `block in results'
+  [1m[36mCACHE Vote Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "votes" WHERE "votes"."poll_id" = 1[0m
+  ↳ app/models/poll.rb:21:in `total_votes'
+  [1m[36mCACHE Vote Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "votes" WHERE "votes"."option_id" = 2[0m
+  ↳ app/models/poll.rb:30:in `block in results'
+  [1m[36mCACHE Vote Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "votes" WHERE "votes"."poll_id" = 1[0m
+  ↳ app/models/poll.rb:21:in `total_votes'
+  [1m[36mCACHE Vote Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "votes" WHERE "votes"."option_id" = 3[0m
+  ↳ app/models/poll.rb:29:in `block in results'
+  [1m[36mCACHE Vote Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "votes" WHERE "votes"."poll_id" = 1[0m
+  ↳ app/models/poll.rb:21:in `total_votes'
+  [1m[36mCACHE Vote Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "votes" WHERE "votes"."option_id" = 3[0m
+  ↳ app/models/poll.rb:30:in `block in results'
+  [1m[36mCACHE Vote Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "votes" WHERE "votes"."poll_id" = 1[0m
+  ↳ app/models/poll.rb:21:in `total_votes'
+  [1m[36mCACHE Vote Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "votes" WHERE "votes"."option_id" = 4[0m
+  ↳ app/models/poll.rb:29:in `block in results'
+  [1m[36mCACHE Vote Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "votes" WHERE "votes"."poll_id" = 1[0m
+  ↳ app/models/poll.rb:21:in `total_votes'
+  [1m[36mCACHE Vote Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "votes" WHERE "votes"."option_id" = 4[0m
+  ↳ app/models/poll.rb:30:in `block in results'
+  [1m[36mCACHE Vote Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "votes" WHERE "votes"."poll_id" = 1[0m
+  ↳ app/models/poll.rb:21:in `total_votes'
+  [1m[36mCACHE Vote Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "votes" WHERE "votes"."option_id" = 5[0m
+  ↳ app/models/poll.rb:29:in `block in results'
+  [1m[36mCACHE Vote Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "votes" WHERE "votes"."poll_id" = 1[0m
+  ↳ app/models/poll.rb:21:in `total_votes'
+  [1m[36mCACHE Vote Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "votes" WHERE "votes"."option_id" = 5[0m
+  ↳ app/models/poll.rb:30:in `block in results'
+  [1m[36mCACHE Vote Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "votes" WHERE "votes"."poll_id" = 1[0m
+  ↳ app/models/poll.rb:21:in `total_votes'
+  [1m[36mCACHE Vote Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "votes" WHERE "votes"."option_id" = 6[0m
+  ↳ app/models/poll.rb:29:in `block in results'
+  [1m[36mCACHE Vote Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "votes" WHERE "votes"."poll_id" = 1[0m
+  ↳ app/models/poll.rb:21:in `total_votes'
+  [1m[36mCACHE Vote Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "votes" WHERE "votes"."option_id" = 6[0m
+  ↳ app/models/poll.rb:30:in `block in results'
+  [1m[36mCACHE Vote Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "votes" WHERE "votes"."poll_id" = 1[0m
+  ↳ app/models/poll.rb:21:in `total_votes'
+Completed 200 OK in 162ms (Views: 0.9ms | ActiveRecord: 13.1ms (58 queries, 38 cached) | GC: 16.7ms)
+
+
