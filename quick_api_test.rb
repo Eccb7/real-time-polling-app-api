@@ -9,18 +9,18 @@ BASE_URL = 'http://localhost:3000'
 def make_request(method, path, data = nil, token = nil)
   uri = URI("#{BASE_URL}#{path}")
   http = Net::HTTP.new(uri.host, uri.port)
-  
+
   case method
   when 'GET'
     request = Net::HTTP::Get.new(uri)
   when 'POST'
     request = Net::HTTP::Post.new(uri)
   end
-  
+
   request['Content-Type'] = 'application/json'
   request['Authorization'] = "Bearer #{token}" if token
   request.body = data.to_json if data
-  
+
   http.request(request)
 end
 
@@ -51,28 +51,28 @@ if response.code == '200'
   result = JSON.parse(response.body)
   polls = result['polls'] || result
   puts "✅ Found #{polls.length} active polls"
-  
+
   # Show first poll details
   if polls.any?
     first_poll = polls.first
     puts "   First poll: #{first_poll['title']}"
     puts "   Total votes: #{first_poll['total_votes']}"
-    
+
     # Check if options exist and are accessible
     if first_poll['options'] && first_poll['options'].any?
       puts "   Options: #{first_poll['options'].length}"
       poll_id = first_poll['id']
-      
+
       # Step 3: Vote on the first poll
       puts "\n3. 🗳️ Voting on first poll..."
       first_option_id = first_poll['options'].first['id']
-      
+
       vote_data = {
         vote: {
           option_id: first_option_id
         }
       }
-      
+
       vote_response = make_request('POST', "/api/v1/polls/#{poll_id}/votes", vote_data, token)
       if vote_response.code == '201'
         vote_result = JSON.parse(vote_response.body)
@@ -80,7 +80,7 @@ if response.code == '200'
       else
         puts "🔄 Vote response: #{vote_response.code} - #{vote_response.body}"
       end
-      
+
       # Step 4: Check updated poll
       puts "\n4. 🔍 Checking poll after vote..."
       updated_response = make_request('GET', "/api/v1/polls/#{poll_id}", nil, token)
@@ -111,7 +111,7 @@ new_poll_data = {
     description: "Testing the API functionality",
     expires_at: (Time.now + 3600).utc.strftime('%Y-%m-%dT%H:%M:%SZ')
   },
-  options: ["Option A", "Option B"]
+  options: [ "Option A", "Option B" ]
 }
 
 create_response = make_request('POST', '/api/v1/polls', new_poll_data, token)
