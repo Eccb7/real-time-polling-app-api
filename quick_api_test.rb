@@ -104,7 +104,7 @@ else
 end
 
 # Step 5: Create a new poll
-puts "\n5. 🆕 Creating a new poll..."
+puts "\n5. 🆕 Creating a new poll...."
 new_poll_data = {
   poll: {
     title: "Quick Test Poll",
