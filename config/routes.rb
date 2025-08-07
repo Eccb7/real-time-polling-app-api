@@ -1,10 +1,35 @@
 Rails.application.routes.draw do
-  # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
+  # Action Cable mount point
+  mount ActionCable.server => "/cable"
 
-  # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
-  # Can be used by load balancers and uptime monitors to verify that the app is live.
+  namespace :api do
+    namespace :v1 do
+      # Authentication routes
+      post "auth/register", to: "auth#register"
+      post "auth/login", to: "auth#login"
+      get "auth/me", to: "auth#me"
+
+      # Polls routes
+      resources :polls do
+        member do
+          get :results
+        end
+        collection do
+          get :my_polls
+        end
+
+        # Nested votes routes
+        resources :votes, only: [ :create, :destroy ]
+      end
+
+      # Standalone votes routes for convenience
+      resources :votes, only: [ :destroy ]
+    end
+  end
+
+  # Health check
   get "up" => "rails/health#show", as: :rails_health_check
 
-  # Defines the root path route ("/")
-  # root "posts#index"
+  # Root route
+  root "rails/health#show"
 end
