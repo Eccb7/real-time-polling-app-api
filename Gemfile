@@ -15,6 +15,22 @@ gem "bcrypt", "~> 3.1.7"
 # JWT for authentication
 gem "jwt"
 
+# Pagination
+gem "kaminari"
+
+# Serialization
+gem "alba"
+
+# Background jobs
+gem "sidekiq"
+
+# Monitoring and error tracking
+gem "sentry-ruby"
+gem "sentry-rails"
+
+# API documentation
+gem "rswag"
+
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
 gem "tzinfo-data", platforms: %i[ windows jruby ]
 
@@ -47,4 +63,23 @@ group :development, :test do
 
   # Omakase Ruby styling [https://github.com/rails/rubocop-rails-omakase/]
   gem "rubocop-rails-omakase", require: false
+
+  # Testing framework
+  gem "rspec-rails"
+  gem "factory_bot_rails"
+  gem "faker"
+
+  # Code coverage
+  gem "simplecov", require: false
+end
+
+group :development do
+  # Performance monitoring
+  gem "bullet"
+
+  # Database query analysis
+  gem "prosopite"
+
+  # Memory profiling
+  gem "memory_profiler"
 end

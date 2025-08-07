@@ -781,3 +781,158 @@ Processing by Api::V1::PollsController#my_polls as */*
 Completed 200 OK in 162ms (Views: 0.9ms | ActiveRecord: 13.1ms (58 queries, 38 cached) | GC: 16.7ms)
 
 
+  [1m[36mActiveRecord::SchemaMigration Load (1.4ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC /*application='RealTimePollingAppApi'*/[0m
+Started GET "/" for ::1 at 2025-08-07 17:42:44 +0300
+  [1m[36mActiveRecord::SchemaMigration Load (2.5ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC /*application='RealTimePollingAppApi'*/[0m
+  
+ActiveRecord::PendingMigrationError (
+
+Migrations are pending. To resolve this issue, run:
+
+        bin/rails db:migrate
+
+You have 1 pending migration:
+
+db/migrate/20250807143000_add_performance_indexes.rb
+
+
+):
+  
+activerecord (8.0.2) lib/active_record/migration.rb:743:in `check_pending_migrations'
+activerecord (8.0.2) lib/active_record/migration.rb:660:in `block (2 levels) in call'
+activesupport (8.0.2) lib/active_support/file_update_checker.rb:85:in `execute'
+activesupport (8.0.2) lib/active_support/file_update_checker.rb:95:in `execute_if_updated'
+activerecord (8.0.2) lib/active_record/migration.rb:667:in `block in call'
+activerecord (8.0.2) lib/active_record/migration.rb:657:in `synchronize'
+activerecord (8.0.2) lib/active_record/migration.rb:657:in `call'
+actionpack (8.0.2) lib/action_dispatch/middleware/callbacks.rb:31:in `block in call'
+activesupport (8.0.2) lib/active_support/callbacks.rb:100:in `run_callbacks'
+actionpack (8.0.2) lib/action_dispatch/middleware/callbacks.rb:30:in `call'
+actionpack (8.0.2) lib/action_dispatch/middleware/executor.rb:16:in `call'
+actionpack (8.0.2) lib/action_dispatch/middleware/actionable_exceptions.rb:18:in `call'
+actionpack (8.0.2) lib/action_dispatch/middleware/debug_exceptions.rb:31:in `call'
+actionpack (8.0.2) lib/action_dispatch/middleware/show_exceptions.rb:32:in `call'
+railties (8.0.2) lib/rails/rack/logger.rb:41:in `call_app'
+railties (8.0.2) lib/rails/rack/logger.rb:29:in `call'
+actionpack (8.0.2) lib/action_dispatch/middleware/remote_ip.rb:96:in `call'
+actionpack (8.0.2) lib/action_dispatch/middleware/request_id.rb:34:in `call'
+rack (3.2.0) lib/rack/runtime.rb:24:in `call'
+actionpack (8.0.2) lib/action_dispatch/middleware/server_timing.rb:61:in `block in call'
+actionpack (8.0.2) lib/action_dispatch/middleware/server_timing.rb:26:in `collect_events'
+actionpack (8.0.2) lib/action_dispatch/middleware/server_timing.rb:60:in `call'
+actionpack (8.0.2) lib/action_dispatch/middleware/executor.rb:16:in `call'
+actionpack (8.0.2) lib/action_dispatch/middleware/static.rb:27:in `call'
+rack (3.2.0) lib/rack/sendfile.rb:114:in `call'
+actionpack (8.0.2) lib/action_dispatch/middleware/host_authorization.rb:143:in `call'
+rack-cors (3.0.0) lib/rack/cors.rb:102:in `call'
+railties (8.0.2) lib/rails/engine.rb:535:in `call'
+puma (6.6.1) lib/puma/configuration.rb:279:in `call'
+puma (6.6.1) lib/puma/request.rb:99:in `block in handle_request'
+puma (6.6.1) lib/puma/thread_pool.rb:390:in `with_force_shutdown'
+puma (6.6.1) lib/puma/request.rb:98:in `handle_request'
+puma (6.6.1) lib/puma/server.rb:472:in `process_client'
+puma (6.6.1) lib/puma/server.rb:254:in `block in run'
+puma (6.6.1) lib/puma/thread_pool.rb:167:in `block in spawn_thread'
+Started GET "/favicon.ico" for ::1 at 2025-08-07 17:42:46 +0300
+  [1m[36mActiveRecord::SchemaMigration Load (3.4ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC /*application='RealTimePollingAppApi'*/[0m
+  
+ActiveRecord::PendingMigrationError (
+
+Migrations are pending. To resolve this issue, run:
+
+        bin/rails db:migrate
+
+You have 1 pending migration:
+
+db/migrate/20250807143000_add_performance_indexes.rb
+
+
+):
+  
+activerecord (8.0.2) lib/active_record/migration.rb:743:in `check_pending_migrations'
+activerecord (8.0.2) lib/active_record/migration.rb:660:in `block (2 levels) in call'
+activesupport (8.0.2) lib/active_support/file_update_checker.rb:85:in `execute'
+activerecord (8.0.2) lib/active_record/migration.rb:665:in `block in call'
+activerecord (8.0.2) lib/active_record/migration.rb:657:in `synchronize'
+activerecord (8.0.2) lib/active_record/migration.rb:657:in `call'
+actionpack (8.0.2) lib/action_dispatch/middleware/callbacks.rb:31:in `block in call'
+activesupport (8.0.2) lib/active_support/callbacks.rb:100:in `run_callbacks'
+actionpack (8.0.2) lib/action_dispatch/middleware/callbacks.rb:30:in `call'
+actionpack (8.0.2) lib/action_dispatch/middleware/executor.rb:16:in `call'
+actionpack (8.0.2) lib/action_dispatch/middleware/actionable_exceptions.rb:18:in `call'
+actionpack (8.0.2) lib/action_dispatch/middleware/debug_exceptions.rb:31:in `call'
+actionpack (8.0.2) lib/action_dispatch/middleware/show_exceptions.rb:32:in `call'
+railties (8.0.2) lib/rails/rack/logger.rb:41:in `call_app'
+railties (8.0.2) lib/rails/rack/logger.rb:29:in `call'
+actionpack (8.0.2) lib/action_dispatch/middleware/remote_ip.rb:96:in `call'
+actionpack (8.0.2) lib/action_dispatch/middleware/request_id.rb:34:in `call'
+rack (3.2.0) lib/rack/runtime.rb:24:in `call'
+actionpack (8.0.2) lib/action_dispatch/middleware/server_timing.rb:61:in `block in call'
+actionpack (8.0.2) lib/action_dispatch/middleware/server_timing.rb:26:in `collect_events'
+actionpack (8.0.2) lib/action_dispatch/middleware/server_timing.rb:60:in `call'
+actionpack (8.0.2) lib/action_dispatch/middleware/executor.rb:16:in `call'
+actionpack (8.0.2) lib/action_dispatch/middleware/static.rb:27:in `call'
+rack (3.2.0) lib/rack/sendfile.rb:114:in `call'
+actionpack (8.0.2) lib/action_dispatch/middleware/host_authorization.rb:143:in `call'
+rack-cors (3.0.0) lib/rack/cors.rb:102:in `call'
+railties (8.0.2) lib/rails/engine.rb:535:in `call'
+puma (6.6.1) lib/puma/configuration.rb:279:in `call'
+puma (6.6.1) lib/puma/request.rb:99:in `block in handle_request'
+puma (6.6.1) lib/puma/thread_pool.rb:390:in `with_force_shutdown'
+puma (6.6.1) lib/puma/request.rb:98:in `handle_request'
+puma (6.6.1) lib/puma/server.rb:472:in `process_client'
+puma (6.6.1) lib/puma/server.rb:254:in `block in run'
+puma (6.6.1) lib/puma/thread_pool.rb:167:in `block in spawn_thread'
+  [1m[36mActiveRecord::SchemaMigration Load (1.2ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC /*application='RealTimePollingAppApi'*/[0m
+  [1m[35m (0.5ms)[0m  [1m[34mSELECT pg_try_advisory_lock(4278266093832997455) /*application='RealTimePollingAppApi'*/[0m
+  [1m[36mActiveRecord::SchemaMigration Load (1.3ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC /*application='RealTimePollingAppApi'*/[0m
+  [1m[36mActiveRecord::InternalMetadata Load (1.3ms)[0m  [1m[34mSELECT * FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = 'environment' ORDER BY "ar_internal_metadata"."key" ASC LIMIT 1 /*application='RealTimePollingAppApi'*/[0m
+Migrating to AddPerformanceIndexes (20250807143000)
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[35mBEGIN /*application='RealTimePollingAppApi'*/[0m
+  [1m[35m (5.7ms)[0m  [1m[35mCREATE INDEX "index_polls_on_active_and_expires_at" ON "polls" ("active", "expires_at") /*application='RealTimePollingAppApi'*/[0m
+  [1m[35m (2.5ms)[0m  [1m[35mCREATE INDEX "index_polls_on_user_and_created_at" ON "polls" ("user_id", "created_at") /*application='RealTimePollingAppApi'*/[0m
+  [1m[35m (6.3ms)[0m  [1m[35mCREATE INDEX "index_polls_on_created_at" ON "polls" ("created_at") /*application='RealTimePollingAppApi'*/[0m
+  [1m[35m (3.2ms)[0m  [1m[35mCREATE INDEX "index_votes_on_poll_and_created_at" ON "votes" ("poll_id", "created_at") /*application='RealTimePollingAppApi'*/[0m
+  [1m[35m (2.2ms)[0m  [1m[35mCREATE INDEX "index_votes_on_user_and_created_at" ON "votes" ("user_id", "created_at") /*application='RealTimePollingAppApi'*/[0m
+  [1m[35m (2.1ms)[0m  [1m[35mCREATE INDEX "index_options_on_poll_and_votes_count" ON "options" ("poll_id", "votes_count") /*application='RealTimePollingAppApi'*/[0m
+  [1m[35m (2.2ms)[0m  [1m[35mCREATE INDEX "index_active_polls_on_expires_at" ON "polls" ("expires_at") WHERE active = true /*application='RealTimePollingAppApi'*/[0m
+  [1m[36mActiveRecord::SchemaMigration Create (1.9ms)[0m  [1m[32mINSERT INTO "schema_migrations" ("version") VALUES ('20250807143000') RETURNING "version" /*application='RealTimePollingAppApi'*/[0m
+  [1m[36mTRANSACTION (3.7ms)[0m  [1m[35mCOMMIT /*application='RealTimePollingAppApi'*/[0m
+  [1m[35m (0.4ms)[0m  [1m[34mSELECT pg_advisory_unlock(4278266093832997455) /*application='RealTimePollingAppApi'*/[0m
+  [1m[36mActiveRecord::SchemaMigration Load (1.7ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC /*application='RealTimePollingAppApi'*/[0m
+Started GET "/" for ::1 at 2025-08-07 17:45:04 +0300
+  [1m[36mActiveRecord::SchemaMigration Load (2.0ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC /*application='RealTimePollingAppApi'*/[0m
+Processing by Rails::HealthController#show as HTML
+  Rendering html template
+  Rendered html template (Duration: 0.6ms | GC: 0.0ms)
+Completed 200 OK in 19ms (Views: 5.4ms | ActiveRecord: 0.0ms (0 queries, 0 cached) | GC: 0.0ms)
+
+
+Started GET "/favicon.ico" for ::1 at 2025-08-07 17:45:05 +0300
+  
+ActionController::RoutingError (No route matches [GET] "/favicon.ico"):
+  
+Started GET "/api/v1/users" for ::1 at 2025-08-07 17:45:20 +0300
+  
+ActionController::RoutingError (No route matches [GET] "/api/v1/users"):
+  
+Started GET "/api/v1/polls" for ::1 at 2025-08-07 17:46:20 +0300
+Processing by Api::V1::PollsController#index as HTML
+Filter chain halted as :authenticate_user rendered or redirected
+Completed 401 Unauthorized in 2ms (Views: 0.7ms | ActiveRecord: 0.0ms (0 queries, 0 cached) | GC: 0.0ms)
+
+
+Started GET "/api/v1/auth-me" for ::1 at 2025-08-07 17:46:41 +0300
+  
+ActionController::RoutingError (No route matches [GET] "/api/v1/auth-me"):
+  
+Started GET "/api/v1/auth/me" for ::1 at 2025-08-07 17:46:55 +0300
+Processing by Api::V1::AuthController#me as HTML
+Filter chain halted as :authenticate_user rendered or redirected
+Completed 401 Unauthorized in 5ms (Views: 1.9ms | ActiveRecord: 0.0ms (0 queries, 0 cached) | GC: 0.0ms)
+
+
+Started GET "/api/v1/auth/register" for ::1 at 2025-08-07 17:47:11 +0300
+  
+ActionController::RoutingError (No route matches [GET] "/api/v1/auth/register"):
+  

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_08_07_140750) do
+ActiveRecord::Schema[8.0].define(version: 2025_08_07_143000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -20,6 +20,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_07_140750) do
     t.integer "votes_count", default: 0, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["poll_id", "votes_count"], name: "index_options_on_poll_and_votes_count"
     t.index ["poll_id"], name: "index_options_on_poll_id"
   end
 
@@ -31,8 +32,12 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_07_140750) do
     t.datetime "expires_at", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["active", "expires_at"], name: "index_polls_on_active_and_expires_at"
     t.index ["active"], name: "index_polls_on_active"
+    t.index ["created_at"], name: "index_polls_on_created_at"
+    t.index ["expires_at"], name: "index_active_polls_on_expires_at", where: "(active = true)"
     t.index ["expires_at"], name: "index_polls_on_expires_at"
+    t.index ["user_id", "created_at"], name: "index_polls_on_user_and_created_at"
     t.index ["user_id"], name: "index_polls_on_user_id"
   end
 
@@ -52,7 +57,9 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_07_140750) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["option_id"], name: "index_votes_on_option_id"
+    t.index ["poll_id", "created_at"], name: "index_votes_on_poll_and_created_at"
     t.index ["poll_id"], name: "index_votes_on_poll_id"
+    t.index ["user_id", "created_at"], name: "index_votes_on_user_and_created_at"
     t.index ["user_id", "poll_id"], name: "index_votes_on_user_and_poll", unique: true
     t.index ["user_id"], name: "index_votes_on_user_id"
   end
