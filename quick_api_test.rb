@@ -87,8 +87,12 @@ if response.code == '200'
       if updated_response.code == '200'
         updated_poll = JSON.parse(updated_response.body)
         puts "✅ Poll updated - Total votes now: #{updated_poll['total_votes']}"
-        updated_poll['options'].each do |option|
-          puts "   #{option['text']}: #{option['votes_count']} votes (#{option['percentage']}%)"
+        if updated_poll['options'] && updated_poll['options'].any?
+          updated_poll['options'].each do |option|
+            puts "   #{option['text']}: #{option['votes_count']} votes (#{option['percentage']}%)"
+          end
+        else
+          puts "   Options data not available in response"
         end
       end
     else
